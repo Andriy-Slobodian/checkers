@@ -28,7 +28,7 @@ export const boardSlice = createSlice({
   initialState,
   reducers: {
     resetBoard(state){
-      state.boardState = defineDefaultBoard();
+      state.boardState = [ ...defineDefaultBoard()];
     },
     updateCheckerShadowByCellId(state, action: PayloadAction<string>){
       state.boardState.map(cell => {
@@ -55,41 +55,31 @@ export const boardSlice = createSlice({
     updateCheckerCoordinatesById(state, action: PayloadAction<{id: string, coordinates: TCoordinates}>) {
       const { id, coordinates} = action.payload;
 
-      state.boardState.map(cell =>
-        cell.id === id
-          ? {
-              ...cell,
-              checkerCoordinates: coordinates
-            }
-          : cell
-      )
+      state.boardState.map(cell => {
+        if (cell.id === id) {
+          cell.checkerCoordinates = coordinates;
+        }
+      })
     },
     updateCellCoordinatesById(state, action: PayloadAction<{id: string, coordinates: TCoordinates}>) {
       const { id, coordinates} = action.payload;
 
-      state.boardState.map(cell =>
-        cell.id === id
-          ? {
-            ...cell,
-            cellCoordinates: coordinates
-          }
-          : cell
-      )
+      state.boardState.map(cell => {
+        if (cell.id === id) {
+          cell.cellCoordinates = coordinates
+        }
+      })
     },
     emptyCellById(state, action: PayloadAction<string>) {
-      state.boardState
-        .map(cell =>
-          cell.id === action.payload
-           ? {
-              ...cell,
-              hasCellChecker: false,
-              checkerCoordinates: null
-            }
-          : cell
-        )
+      state.boardState.map(cell => {
+          if (cell.id === action.payload) {
+            cell.hasCellChecker = false;
+            cell.checkerCoordinates = null;
+          }
+        })
     },
     updateCell(state, action: PayloadAction<TCell>) {
-      state.boardState.map(cell =>
+      state.boardState = state.boardState.map(cell =>
         cell.id === action.payload.id
           ? action.payload
           : cell

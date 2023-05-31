@@ -1,13 +1,22 @@
-import {FC} from "react";
+import {FC, useEffect, useState} from "react";
 import css from "./Board.css";
 import {Cell} from "./Cell/Cell";
-import {useSelector} from "react-redux";
+import {defineDefaultBoard} from "@utils/board-util";
+import {useDispatch, useSelector} from "react-redux";
+import {resetBoard} from "@slices/board-slice";
 import {selectBoard} from "@selectors/board-selectors";
 
 export const Board: FC = () => {
+  const dispatch = useDispatch();
   const board = useSelector(selectBoard);
 
-  console.log(board);
+  useEffect(() => {
+    if (board.length === 0) {
+      dispatch(resetBoard);
+    }
+  }, []);
+
+  // console.log(board);
 
   return (
     <>

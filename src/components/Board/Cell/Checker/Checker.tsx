@@ -14,7 +14,7 @@ import {
   TCoordinates,
   updateCheckerCoordinatesById,
   updateCheckerShadowByCellId,
-  updatePossibleGoCellListByCellIdList
+  updatePossibleGoCellListByCellIdList, resetPossibleGoCell
 } from "@slices/board-slice";
 import {DEFAULT_CELL_HEIGHT, DEFAULT_CELL_WIDTH} from "@constants";
 
@@ -72,9 +72,12 @@ export const Checker: FC<Props> = ({
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
     const newCheckerCell = possibleGoCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
+    console.log('CURRENT:', currentCell);
+    console.log('NEW:', newCheckerCell);
+
     if (newCheckerCell) {
-      dispatch(updateCell({
-        id: newCheckerCell.id,
+     dispatch(updateCell({
+        ...newCheckerCell,
         checkerCoordinates: {
           x: newCheckerCell.cellCoordinates.x + 11,
           y: newCheckerCell.cellCoordinates.y + 11
@@ -82,12 +85,10 @@ export const Checker: FC<Props> = ({
         hasCellChecker: true,
         isPossibleGoCell: false,
         isCheckerBlack: currentCell.isCheckerBlack,
-        cellCoordinates: newCheckerCell.cellCoordinates,
         hasCheckerShadow: true,
-        isPlayingCell: true,
-        isQueen: false
       }));
       dispatch(emptyCellById(currentCell.id));
+      dispatch(resetPossibleGoCell());
     }
   }
 
@@ -99,6 +100,7 @@ export const Checker: FC<Props> = ({
           bounds={currentCell.isCheckerBlack ? {top: 0} : {bottom: 0}}
           onStart={handleStartDragging}
           onStop={handleStopDragging}
+          position={{ x: 0, y: 0 }}
         >
           <div ref={checkerRef} className={checkerShadowClass} />
         </Draggable>
