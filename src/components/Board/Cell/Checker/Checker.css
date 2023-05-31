@@ -1,0 +1,16 @@
+.default {
+    width: 80px;
+    height: 80px;
+    margin: 10px;
+    border-radius: 40px;
+    background-color: #fff;
+    cursor: pointer;
+    box-shadow: 8px 6px 5px lightblue;
+    border: 1px solid cadetblue;
+}
+.black {
+    background-color: #000;
+}
+.noShadow {
+    box-shadow: 0 0 0 transparent;
+}

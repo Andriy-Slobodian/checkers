@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@utils/*": ["src/utils/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@selectors/*": ["src/redux/selectors/*"],
+      "@slices/*": ["src/redux/slices/*"],
+      "@constants": ["src/constants.ts"]
+    }
+  }
+}

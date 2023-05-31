@@ -1,0 +1,10 @@
+.container {
+    width: 801px;
+    height: auto;
+    padding: 0;
+    margin: 0 auto;
+    border-bottom: 1px solid grey;
+    border-right: 1px solid grey;
+    display: flex;
+    flex-wrap: wrap;
+}

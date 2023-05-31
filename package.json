@@ -1,0 +1,31 @@
+{
+  "name": "checkers",
+  "version": "1.0.0",
+  "description": "Test task for Developex",
+  "main": "src/index.tsx",
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "webpack serve --mode development"
+  },
+  "author": "Andriy Slobodian",
+  "license": "Attribution-NonCommercial-NoDerivs 3.0 Unported",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.5",
+    "react-redux": "^8.0.5"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.5.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "path": "^0.12.7",
+    "ts-loader": "^9.4.3",
+    "typescript": "^5.0.4",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0"
+  }
+}

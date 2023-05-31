@@ -1,0 +1,16 @@
+.container {
+    width: 800px;
+    padding: 10px 0;
+    margin: 0 auto;
+}
+.newGameBtn {
+    padding: 8px 12px;
+    margin: 0;
+    background-color: beige;
+    border: 1px solid grey;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.newGameBtn:hover {
+    background-color: aquamarine;
+}
