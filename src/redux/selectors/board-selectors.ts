@@ -1,5 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { store } from "../store";
+import {selectIsWhiteTurn} from "@selectors/activity-selectors";
 
 export const selectBoard = () => store.getState().board.boardState;
 

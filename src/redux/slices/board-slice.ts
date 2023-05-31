@@ -28,14 +28,16 @@ export const boardSlice = createSlice({
   initialState,
   reducers: {
     resetBoard(state){
-      state.boardState = [ ...defineDefaultBoard()];
+      defineDefaultBoard().map(cell => {
+        cell.checkerCoordinates = null
+      })
     },
     updateCheckerShadowByCellId(state, action: PayloadAction<string>){
       state.boardState.map(cell => {
         cell.hasCheckerShadow = cell.id !== action.payload;
       })
     },
-    resetCheckerShadow(state, action: PayloadAction<string>) {
+    resetCheckerShadow(state) {
       state.boardState.map(cell => {
         cell.hasCheckerShadow = true;
       })

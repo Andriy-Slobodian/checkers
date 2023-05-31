@@ -4,3 +4,9 @@
     margin: 0 auto;
     text-align: center;
 }
+.textAlignLeft {
+    text-align: left;
+}
+.textAlignRight {
+    text-align: right;
+}

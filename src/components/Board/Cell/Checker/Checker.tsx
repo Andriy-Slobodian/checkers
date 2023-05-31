@@ -17,6 +17,8 @@ import {
   updatePossibleGoCellListByCellIdList, resetPossibleGoCell
 } from "@slices/board-slice";
 import {DEFAULT_CELL_HEIGHT, DEFAULT_CELL_WIDTH} from "@constants";
+import {updateTurn} from "@slices/activity-slice";
+import {selectIsWhiteTurn} from "@selectors/activity-selectors";
 
 interface Props {
   id: string;
@@ -30,6 +32,7 @@ export const Checker: FC<Props> = ({
   const possibleGoCellIdList = useSelector(selectPossibleGoCellIdListById(id));
   const possibleGoCellList = useSelector(selectCellListByIdList(possibleGoCellIdList));
   const isCheckerMovable = useSelector(selectIsCheckerMovable(id));
+  const isWhiteTurn = useSelector(selectIsWhiteTurn);
 
   const checkerColourClass = currentCell.isCheckerBlack ? css.default + ' ' + css.black : css.default;
   const checkerShadowClass = currentCell.hasCheckerShadow ? checkerColourClass : checkerColourClass + ' ' + css.noShadow;
@@ -44,7 +47,6 @@ export const Checker: FC<Props> = ({
       }
     }));
   }, []);
-
 
   const isOverlapping = (pointerCoordinates, cellCoordinates) => {
     if (!pointerCoordinates || !cellCoordinates) {
@@ -72,11 +74,9 @@ export const Checker: FC<Props> = ({
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
     const newCheckerCell = possibleGoCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
-    console.log('CURRENT:', currentCell);
-    console.log('NEW:', newCheckerCell);
-
     if (newCheckerCell) {
-     dispatch(updateCell({
+      dispatch(updateTurn(!isWhiteTurn));
+      dispatch(updateCell({
         ...newCheckerCell,
         checkerCoordinates: {
           x: newCheckerCell.cellCoordinates.x + 11,
@@ -98,7 +98,11 @@ export const Checker: FC<Props> = ({
       {isCheckerMovable && (
         <Draggable
           bounds={currentCell.isCheckerBlack ? {top: 0} : {bottom: 0}}
-          onStart={handleStartDragging}
+          onStart={
+            isWhiteTurn !== currentCell.isCheckerBlack
+              ? handleStartDragging
+              : () => false
+          }
           onStop={handleStopDragging}
           position={{ x: 0, y: 0 }}
         >

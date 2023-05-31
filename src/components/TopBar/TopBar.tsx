@@ -1,4 +1,4 @@
-import {FC} from "react";
+import React, {FC} from "react";
 import css from "./TopBar.css";
 import {useDispatch} from "react-redux";
 import {resetBoard} from "@slices/board-slice";

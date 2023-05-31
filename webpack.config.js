@@ -40,6 +40,7 @@ module.exports = {
         alias: {
             "@utils": path.resolve(__dirname, 'src/utils'),
             "@components": path.resolve(__dirname, 'src/components'),
+            "@shared": path.resolve(__dirname, 'src/components-shared'),
             "@hooks": path.resolve(__dirname, "src/hooks"),
             "@selectors": path.resolve(__dirname, "src/redux/selectors"),
             "@slices": path.resolve(__dirname, "src/redux/slices"),

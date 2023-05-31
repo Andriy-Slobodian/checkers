@@ -5,6 +5,7 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
+      "@shared/*": ["src/components-shared/*"],
       "@utils/*": ["src/utils/*"],
       "@hooks/*": ["src/hooks/*"],
       "@selectors/*": ["src/redux/selectors/*"],
