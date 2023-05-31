@@ -23,18 +23,21 @@
     border-radius: 0 0 8px 8px;
 }
 .turn {
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    margin: 4px 0 0;
     display: inline-block;
     float: right;
-    border-radius: 11px;
     border: 1px solid darkslategrey;
 }
 .turnOn {
+    width: 24px;
+    height: 24px;
+    border-radius: 13px;
     background-color: #4ce84c;
+    box-shadow: 4px 2px 6px lightblue;
 }
 .turnOff {
+    width: 16px;
+    height: 16px;
+    margin-top: 6px;
+    border-radius: 9px;
     background-color: #e10a0a;
 }

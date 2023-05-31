@@ -1,11 +1,11 @@
 import React, {FC, useEffect} from "react";
 import css from './Activities.css';
-import {Header} from "@shared/Header/Header";
-import {useDispatch, useSelector} from "react-redux";
-import {selectActivityList} from "@selectors/activity-selectors";
-import {addActivity} from "@slices/activity-slice";
-import {DEFAULT_ACTIVITY_TEXT} from "@constants";
-import {resetBoard} from "@slices/board-slice";
+import { Header } from "@shared/Header/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { selectActivityList } from "@selectors/activity-selectors";
+import { addActivity } from "@slices/activity-slice";
+import { DEFAULT_ACTIVITY_TEXT } from "@constants";
+import { resetBoard } from "@slices/board-slice";
 
 export const Activities: FC = () => {
   const dispatch = useDispatch();

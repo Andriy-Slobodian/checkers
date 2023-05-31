@@ -1,6 +1,4 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Simulate} from "react-dom/test-utils";
-import change = Simulate.change;
 
 
 const initialState = {
@@ -28,6 +26,5 @@ export const activitySlice = createSlice({
 
 export const {
   addActivity,
-  clearActivityList,
   updateTurn
 } = activitySlice.actions
