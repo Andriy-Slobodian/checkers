@@ -39,7 +39,7 @@ export const selectPossibleGoCellIdListById = (id: string) => createSelector(
 export const selectCellListByIdList = (idList: string[]) => createSelector(
   [selectPlayingCellList],
   (cellList) =>
-    cellList.filter(cell => idList.includes(cell.id))
+    cellList.filter(cell => idList.includes(cell.id) && !cell.hasCellChecker)
 );
 
 export const selectIsCheckerMovable = (id: string) => createSelector(

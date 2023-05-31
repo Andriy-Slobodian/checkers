@@ -7,16 +7,9 @@ import {resetBoard} from "@slices/board-slice";
 import {selectBoard} from "@selectors/board-selectors";
 
 export const Board: FC = () => {
-  const dispatch = useDispatch();
   const board = useSelector(selectBoard);
 
-  useEffect(() => {
-    if (board.length === 0) {
-      dispatch(resetBoard);
-    }
-  }, []);
-
-  // console.log(board);
+  console.log(board);
 
   return (
     <>
