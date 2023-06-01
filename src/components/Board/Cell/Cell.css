@@ -8,7 +8,9 @@
 .painted {
     background-color: cadetblue;
 }
-
+.capturing {
+    background-color: #79b209;
+}
 .possibleGo {
     background-color: #c3ec72;
 }

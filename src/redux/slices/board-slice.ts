@@ -17,11 +17,13 @@ export type TCell = {
   hasCheckerShadow: boolean;
   isPossibleGoCell: boolean;
   isQueen: boolean;
+  isHighlightedForCapturing: boolean;
 }
 
 const initialState = {
   boardState: defineDefaultBoard(),
-  turnCounter: 0
+  turnCounter: 0,
+  captureList: []
 }
 
 export const boardSlice = createSlice({
@@ -90,6 +92,22 @@ export const boardSlice = createSlice({
     },
     increaseTurnCounter(state) {
       state.turnCounter += 1;
+    },
+    initCapturing(state, action: PayloadAction<TCell[]>) {
+      state.captureList = action.payload;
+    },
+    resetCapturing(state) {
+      state.captureList = [];
+      state.boardState.map(cell => {
+        cell.isHighlightedForCapturing = false;
+      })
+    },
+    highlightCaptureCellById(state, action: PayloadAction<string>) {
+      state.boardState.map(cell =>
+        cell.id === action.payload
+          ? cell.isHighlightedForCapturing = true
+          : cell
+      )
     }
   }
 });
@@ -104,5 +122,8 @@ export const {
   updateCellCoordinatesById,
   emptyCellById,
   updateCell,
-  increaseTurnCounter
+  increaseTurnCounter,
+  initCapturing,
+  resetCapturing,
+  highlightCaptureCellById
 } = boardSlice.actions;

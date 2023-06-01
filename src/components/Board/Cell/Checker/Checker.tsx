@@ -2,9 +2,11 @@ import { FC, useEffect, useRef } from "react";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import {
+  selectCaptureList,
   selectCellById,
   selectCellListByIdList,
-  selectIsCheckerMovable, selectIsBlackFirstMoveTurn,
+  selectHighlightedCellList,
+  selectIsCheckerMovable,
   selectIsWhiteTurn,
   selectPossibleGoCellIdListById
 } from "@selectors/board-selectors";
@@ -16,16 +18,13 @@ import {
   updateCheckerShadowByCellId,
   updatePossibleGoCellListByCellIdList,
   resetPossibleGoCell,
-  increaseTurnCounter
+  increaseTurnCounter, resetCapturing
 } from "@slices/board-slice";
 import {
-  DEFAULT_ACTIVITY_TEXT_PLAYER_1,
-  DEFAULT_ACTIVITY_TEXT_PLAYER_2,
   DEFAULT_CELL_HEIGHT,
   DEFAULT_CELL_WIDTH
 } from "@constants";
 import css from "./Checker.css";
-import {addActivity} from "@slices/activity-slice";
 
 interface Props {
   id: string;
@@ -40,10 +39,12 @@ export const Checker: FC<Props> = ({
   const possibleGoCellList = useSelector(selectCellListByIdList(possibleGoCellIdList));
   const isCheckerMovable = useSelector(selectIsCheckerMovable(id));
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
-  const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
+  const highlightedForCapturingCellList = useSelector(selectHighlightedCellList);
+  const captureList = useSelector(selectCaptureList);
 
   const checkerColourClass = currentCell.isCheckerBlack ? css.default + ' ' + css.black : css.default;
   const checkerShadowClass = currentCell.hasCheckerShadow ? checkerColourClass : checkerColourClass + ' ' + css.noShadow;
+  const isCapturing = highlightedForCapturingCellList.length > 0;
 
   // OnMount Checker define & store its coordinates
   useEffect(() => {
@@ -55,12 +56,6 @@ export const Checker: FC<Props> = ({
       }
     }));
   }, []);
-
-  useEffect(() => {
-    if (isBlackFirstMoveTurn) {
-      dispatch(addActivity(DEFAULT_ACTIVITY_TEXT_PLAYER_2));
-    }
-  }, [])
 
   const isOverlapping = (pointerCoordinates, cellCoordinates) => {
     if (!pointerCoordinates || !cellCoordinates) {
@@ -75,18 +70,18 @@ export const Checker: FC<Props> = ({
     return isHorizontalOverlapping && isVerticalOverlapping;
   };
 
-  const handleStartDragging = (e) => {
-    dispatch(updatePossibleGoCellListByCellIdList(possibleGoCellIdList));
+  const handleStartDragging = () => {
+    if (!isCapturing) {
+      dispatch(updatePossibleGoCellListByCellIdList(possibleGoCellIdList));
+    }
+
     dispatch(updateCheckerShadowByCellId(id));
   }
 
   const handleStopDragging = (e) => {
-    if (!e) {
-      return;
-    }
-
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
-    const newCheckerCell = possibleGoCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
+    const nextMoveCellList = isCapturing ? highlightedForCapturingCellList : possibleGoCellList;
+    const newCheckerCell = nextMoveCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
     // New move success
     if (newCheckerCell) {
@@ -98,12 +93,15 @@ export const Checker: FC<Props> = ({
           y: newCheckerCell.cellCoordinates.y + 11
         },
         hasCellChecker: true,
-        isPossibleGoCell: false,
         isCheckerBlack: currentCell.isCheckerBlack,
-        hasCheckerShadow: true,
+        hasCheckerShadow: true
       }));
       dispatch(emptyCellById(currentCell.id));
+      if (isCapturing) {
+        dispatch(emptyCellById(captureList[1].id));
+      }
       dispatch(resetPossibleGoCell());
+      dispatch(resetCapturing());
     }
   }
 
@@ -112,7 +110,6 @@ export const Checker: FC<Props> = ({
       {!isCheckerMovable && <div ref={checkerRef} className={checkerShadowClass} />}
       {isCheckerMovable && (
         <Draggable
-          bounds={currentCell.isCheckerBlack ? {top: 0} : {bottom: 0}}
           onStart={
             isWhiteTurn !== currentCell.isCheckerBlack
               ? handleStartDragging
