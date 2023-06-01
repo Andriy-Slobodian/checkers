@@ -7,6 +7,9 @@
 .container > * {
     display: block;
 }
+.text {
+    padding: 10px 20px;
+}
 .container > h2 {
     width: calc(100% - 40px);
     padding: 12px 20px;
@@ -15,8 +18,11 @@
     border-radius: 8px 8px 0 0;
 }
 .list {
-    height: 680px;
+    height: 606px;
     padding: 0 40px;
+}
+.list li {
+    margin-bottom: 14px
 }
 .newGameBtn {
     width: 100%;
@@ -26,6 +32,7 @@
     color: white;
     border-radius: 12px;
     cursor: pointer;
+    border: 1px solid grey;
 }
 .newGameBtn:hover {
     color: black;

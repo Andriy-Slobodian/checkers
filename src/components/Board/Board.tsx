@@ -1,8 +1,7 @@
 import {FC} from "react";
 import { Cell } from "./Cell/Cell";
 import { useSelector } from "react-redux";
-import { selectBoard } from "@selectors/board-selectors";
-import { selectIsWhiteTurn } from "@selectors/activity-selectors";
+import { selectBoard, selectIsWhiteTurn } from "@selectors/board-selectors";
 import { PLAYER_1_NAME, PLAYER_2_NAME } from "@constants";
 import css from "./Board.css";
 
@@ -11,7 +10,7 @@ export const Board: FC = () => {
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
 
   const whiteClasses = [css.turn, isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
-  const blackClasses = [css.turn, isWhiteTurn ? css.turnOff : css.turnOn].join(' ');
+  const blackClasses = [css.turn, !isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
 
   // console.log(board);
 
@@ -20,7 +19,7 @@ export const Board: FC = () => {
       {board.length > 0 && (
         <>
           <div className={css.player}>
-            {PLAYER_1_NAME}
+            {PLAYER_2_NAME}
             <span className={blackClasses} />
           </div>
 
@@ -33,7 +32,7 @@ export const Board: FC = () => {
           </div>
 
           <div className={css.player}>
-            {PLAYER_2_NAME}
+            {PLAYER_1_NAME}
             <span className={whiteClasses} />
           </div>
         </>

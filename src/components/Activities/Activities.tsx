@@ -4,7 +4,7 @@ import { Header } from "@shared/Header/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { selectActivityList } from "@selectors/activity-selectors";
 import { addActivity } from "@slices/activity-slice";
-import { DEFAULT_ACTIVITY_TEXT } from "@constants";
+import {DEFAULT_ACTIVITY_TEXT_PLAYER_1} from "@constants";
 import { resetBoard } from "@slices/board-slice";
 
 export const Activities: FC = () => {
@@ -12,7 +12,7 @@ export const Activities: FC = () => {
   const activityList = useSelector(selectActivityList);
 
   useEffect(() => {
-    dispatch(addActivity(DEFAULT_ACTIVITY_TEXT))
+    dispatch(addActivity(DEFAULT_ACTIVITY_TEXT_PLAYER_1));
   }, []);
 
   const handleNewGame = () => {
@@ -22,6 +22,7 @@ export const Activities: FC = () => {
   return (
     <div className={css.container}>
       <Header align="left" text="Activities" type="h2" />
+      <p className={css.text}>Welcome! This is a demo-commentator of the game activities.</p>
       <ol className={css.list}>
         {activityList.map((activity, index) => {
           return (

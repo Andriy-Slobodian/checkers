@@ -1,11 +1,11 @@
-import {FC, useEffect, useRef, useState} from "react";
-import css from "./Checker.css";
+import { FC, useEffect, useRef } from "react";
 import Draggable from 'react-draggable';
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectCellById,
   selectCellListByIdList,
-  selectIsCheckerMovable,
+  selectIsCheckerMovable, selectIsBlackFirstMoveTurn,
+  selectIsWhiteTurn,
   selectPossibleGoCellIdListById
 } from "@selectors/board-selectors";
 import {
@@ -14,11 +14,18 @@ import {
   TCoordinates,
   updateCheckerCoordinatesById,
   updateCheckerShadowByCellId,
-  updatePossibleGoCellListByCellIdList, resetPossibleGoCell
+  updatePossibleGoCellListByCellIdList,
+  resetPossibleGoCell,
+  increaseTurnCounter
 } from "@slices/board-slice";
-import {DEFAULT_CELL_HEIGHT, DEFAULT_CELL_WIDTH} from "@constants";
-import {updateTurn} from "@slices/activity-slice";
-import {selectIsWhiteTurn} from "@selectors/activity-selectors";
+import {
+  DEFAULT_ACTIVITY_TEXT_PLAYER_1,
+  DEFAULT_ACTIVITY_TEXT_PLAYER_2,
+  DEFAULT_CELL_HEIGHT,
+  DEFAULT_CELL_WIDTH
+} from "@constants";
+import css from "./Checker.css";
+import {addActivity} from "@slices/activity-slice";
 
 interface Props {
   id: string;
@@ -33,6 +40,7 @@ export const Checker: FC<Props> = ({
   const possibleGoCellList = useSelector(selectCellListByIdList(possibleGoCellIdList));
   const isCheckerMovable = useSelector(selectIsCheckerMovable(id));
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
+  const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
 
   const checkerColourClass = currentCell.isCheckerBlack ? css.default + ' ' + css.black : css.default;
   const checkerShadowClass = currentCell.hasCheckerShadow ? checkerColourClass : checkerColourClass + ' ' + css.noShadow;
@@ -47,6 +55,12 @@ export const Checker: FC<Props> = ({
       }
     }));
   }, []);
+
+  useEffect(() => {
+    if (isBlackFirstMoveTurn) {
+      dispatch(addActivity(DEFAULT_ACTIVITY_TEXT_PLAYER_2));
+    }
+  }, [])
 
   const isOverlapping = (pointerCoordinates, cellCoordinates) => {
     if (!pointerCoordinates || !cellCoordinates) {
@@ -74,8 +88,9 @@ export const Checker: FC<Props> = ({
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
     const newCheckerCell = possibleGoCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
+    // New move success
     if (newCheckerCell) {
-      dispatch(updateTurn(!isWhiteTurn));
+      dispatch(increaseTurnCounter());
       dispatch(updateCell({
         ...newCheckerCell,
         checkerCoordinates: {

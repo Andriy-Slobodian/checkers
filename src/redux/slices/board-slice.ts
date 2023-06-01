@@ -21,6 +21,7 @@ export type TCell = {
 
 const initialState = {
   boardState: defineDefaultBoard(),
+  turnCounter: 0
 }
 
 export const boardSlice = createSlice({
@@ -86,6 +87,9 @@ export const boardSlice = createSlice({
           ? action.payload
           : cell
       )
+    },
+    increaseTurnCounter(state) {
+      state.turnCounter += 1;
     }
   }
 });
@@ -99,5 +103,6 @@ export const {
   updateCheckerCoordinatesById,
   updateCellCoordinatesById,
   emptyCellById,
-  updateCell
+  updateCell,
+  increaseTurnCounter
 } = boardSlice.actions;

@@ -2,8 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 
 const initialState = {
-  activityList: [],
-  isWhiteTurn: true
+  activityList: []
 }
 export const activitySlice = createSlice({
   name: 'activity',
@@ -17,14 +16,11 @@ export const activitySlice = createSlice({
     },
     clearActivityList(state) {
       state.activityList = [];
-    },
-    updateTurn(state, action: PayloadAction<boolean>) {
-      state.isWhiteTurn = action.payload;
     }
   }
 });
 
 export const {
   addActivity,
-  updateTurn
+  clearActivityList
 } = activitySlice.actions

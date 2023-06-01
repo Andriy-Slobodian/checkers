@@ -1,8 +1,19 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { store } from "../store";
-import {selectIsWhiteTurn} from "@selectors/activity-selectors";
 
 export const selectBoard = () => store.getState().board.boardState;
+
+export const selectTurnCounter = () => store.getState().board.turnCounter;
+
+export const selectIsWhiteTurn = createSelector(
+  [selectTurnCounter],
+  (turnCounter) => !Boolean(turnCounter % 2)
+);
+
+export const selectIsBlackFirstMoveTurn = createSelector(
+  [selectTurnCounter],
+  (turnCounter) => turnCounter === 1
+);
 
 export const selectPlayingCellList = createSelector(
   [selectBoard],
