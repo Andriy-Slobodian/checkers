@@ -1,4 +1,4 @@
-import {FC, useEffect, useRef, useState} from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,11 +21,7 @@ import {
   increaseTurnCounter,
   resetCapturing
 } from "@slices/board-slice";
-import {
-  DEFAULT_CELL_HEIGHT,
-  DEFAULT_CELL_WIDTH,
-} from "@constants";
-import { actualizeHighlightedCellList } from "@utils/board-util";
+import { actualizeHighlightedCellList, isOverlapping } from "@utils/board-util";
 import css from "./Checker.css";
 
 interface Props {
@@ -59,19 +55,6 @@ export const Checker: FC<Props> = ({
       }
     }));
   }, []);
-
-  const isOverlapping = (pointerCoordinates, cellCoordinates) => {
-    if (!pointerCoordinates || !cellCoordinates) {
-      return false;
-    }
-
-    const horizontalDifference = pointerCoordinates.x - cellCoordinates.x;
-    const verticalDifference = pointerCoordinates.y - cellCoordinates.y;
-    const isHorizontalOverlapping = horizontalDifference <= DEFAULT_CELL_WIDTH && horizontalDifference >= 0;
-    const isVerticalOverlapping = verticalDifference <= DEFAULT_CELL_HEIGHT && verticalDifference >= 0;
-
-    return isHorizontalOverlapping && isVerticalOverlapping;
-  };
 
   const handleStartDragging = () => {
     setActualizedCaptureList(actualizeHighlightedCellList(currentCell.id, highlightedForCapturingCellList));
@@ -119,7 +102,6 @@ export const Checker: FC<Props> = ({
       {!isCheckerMovable && <div ref={checkerRef} className={checkerShadowClass} />}
       {isCheckerMovable && (
         <Draggable
-          // bounds={currentCell.isCheckerBlack ? {top: 0} : {bottom: 0}}
           onStart={
             isWhiteTurn !== currentCell.isCheckerBlack
               ? handleStartDragging

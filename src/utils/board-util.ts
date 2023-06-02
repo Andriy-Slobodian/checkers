@@ -1,5 +1,7 @@
 import {TCell} from "@slices/board-slice";
 import {
+  DEFAULT_CELL_HEIGHT,
+  DEFAULT_CELL_WIDTH,
   DEFAULT_COLUMN_AMOUNT,
   DEFAULT_ROW_AMOUNT,
   LEFT_CAPTURE_DIFFERENCE,
@@ -86,4 +88,17 @@ export const actualizeHighlightedCellList = (id, list) => {
 
       return idDifference === LEFT_CAPTURE_DIFFERENCE || idDifference === RIGHT_CAPTURE_DIFFERENCE
     })
+};
+
+export const isOverlapping = (pointerCoordinates, cellCoordinates) => {
+  if (!pointerCoordinates || !cellCoordinates) {
+    return false;
+  }
+
+  const horizontalDifference = pointerCoordinates.x - cellCoordinates.x;
+  const verticalDifference = pointerCoordinates.y - cellCoordinates.y;
+  const isHorizontalOverlapping = horizontalDifference <= DEFAULT_CELL_WIDTH && horizontalDifference >= 0;
+  const isVerticalOverlapping = verticalDifference <= DEFAULT_CELL_HEIGHT && verticalDifference >= 0;
+
+  return isHorizontalOverlapping && isVerticalOverlapping;
 };
