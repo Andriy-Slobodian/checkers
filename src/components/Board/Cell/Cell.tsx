@@ -1,8 +1,8 @@
 import React, {FC, useEffect, useRef} from "react";
-import css from "./Cell.css";
 import { Checker } from "./Checker/Checker";
 import { updateCellCoordinatesById } from "@slices/board-slice";
 import { useDispatch } from "react-redux";
+import css from "./Cell.css";
 
 interface Props {
   id: string;

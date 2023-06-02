@@ -5,6 +5,7 @@ import {
   selectBoard,
   selectCheckCapturing,
   selectIsBlackFirstMoveTurn,
+  selectIsCapturing,
   selectIsWhiteTurn,
 } from "@selectors/board-selectors";
 import {
@@ -27,6 +28,7 @@ export const Board: FC = () => {
   const activityList = useSelector(selectActivityList);
 
   const captureList = useSelector(selectCheckCapturing);
+  const isCapturing = useSelector(selectIsCapturing);
 
   const whiteClasses = [css.turn, isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
   const blackClasses = [css.turn, !isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
@@ -38,19 +40,21 @@ export const Board: FC = () => {
   }, [isBlackFirstMoveTurn]);
 
   useEffect(() => {
-    if (captureList.length > 0) {
-      dispatch(initCapturing(captureList));
-
+    if (isCapturing) {
       if (activityList.length < ACTIVITY_MESSAGES_LIMIT) {
         dispatch(addActivity(DEFAULT_ACTIVITY_CAPTURING_TEXT));
       }
-
-      captureList.forEach((id, index) => {
-        if ((index + 1) % 3 === 0) {
-          dispatch(highlightCaptureCellById(id));
-        }
-      });
     }
+  }, [isCapturing]);
+
+  useEffect(() => {
+    dispatch(initCapturing(captureList));
+
+    captureList.forEach((id, index) => {
+      if ((index + 1) % 3 === 0) {
+        dispatch(highlightCaptureCellById(id));
+      }
+    });
   }, [board, captureList]);
 
   // console.log(board);
