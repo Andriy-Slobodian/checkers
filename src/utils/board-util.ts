@@ -102,3 +102,6 @@ export const isOverlapping = (pointerCoordinates, cellCoordinates) => {
 
   return isHorizontalOverlapping && isVerticalOverlapping;
 };
+
+export const isQueen = (id: string, isBlack: boolean) =>
+  isBlack && id.startsWith('8') || !isBlack && id.startsWith('1');

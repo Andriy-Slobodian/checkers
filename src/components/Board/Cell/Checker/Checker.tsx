@@ -7,6 +7,7 @@ import {
   selectCellListByIdList,
   selectHighlightedCellList,
   selectIsCheckerMovable,
+  selectIsQueen,
   selectIsWhiteTurn,
   selectPossibleGoCellIdListById
 } from "@selectors/board-selectors";
@@ -21,7 +22,7 @@ import {
   increaseTurnCounter,
   resetCapturing
 } from "@slices/board-slice";
-import { actualizeHighlightedCellList, isOverlapping } from "@utils/board-util";
+import { actualizeHighlightedCellList, isOverlapping, isQueen } from "@utils/board-util";
 import css from "./Checker.css";
 
 interface Props {
@@ -39,6 +40,7 @@ export const Checker: FC<Props> = ({
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const highlightedForCapturingCellList = useSelector(selectHighlightedCellList);
   const captureList = useSelector(selectCaptureList);
+  const isCheckerQueen = useSelector(selectIsQueen(id));
   const [actualizedCaptureList, setActualizedCaptureList] = useState(highlightedForCapturingCellList);
 
   const isCapturing = captureList.length > 0;
@@ -82,7 +84,8 @@ export const Checker: FC<Props> = ({
         hasCellChecker: true,
         isCheckerBlack: currentCell.isCheckerBlack,
         isHighlightedForCapturing: false,
-        hasCheckerShadow: true
+        hasCheckerShadow: true,
+        isQueen: currentCell.isQueen || isQueen(newCheckerCell.id, currentCell.isCheckerBlack)
       }));
       dispatch(emptyCellById(currentCell.id));
       if (isCapturing) {
@@ -97,9 +100,17 @@ export const Checker: FC<Props> = ({
     setActualizedCaptureList(highlightedForCapturingCellList);
   }
 
+  const $Checker = (
+    <div ref={checkerRef} className={checkerShadowClass}>
+      {isCheckerQueen && (
+        <div className={css.queen} />
+      )}
+    </div>
+  );
+
   return (
     <>
-      {!isCheckerMovable && <div ref={checkerRef} className={checkerShadowClass} />}
+      {!isCheckerMovable && $Checker}
       {isCheckerMovable && (
         <Draggable
           onStart={
@@ -110,7 +121,7 @@ export const Checker: FC<Props> = ({
           onStop={handleStopDragging}
           position={{ x: 0, y: 0 }}
         >
-          <div ref={checkerRef} className={checkerShadowClass} />
+          {$Checker}
         </Draggable>
       )}
     </>

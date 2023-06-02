@@ -108,6 +108,13 @@ export const boardSlice = createSlice({
           ? cell.isHighlightedForCapturing = true
           : cell
       )
+    },
+    setQueen(state, action: PayloadAction<string>) {
+      state.boardState.map(cell =>
+        cell.id === action.payload
+          ? cell.isQueen = true
+          : cell
+      )
     }
   }
 });

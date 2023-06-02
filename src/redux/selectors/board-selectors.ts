@@ -136,3 +136,8 @@ export const selectCalculatedCaptureList = createSelector(
     return capturingList;
   }
 );
+
+export const selectIsQueen = (id) => createSelector(
+  [selectPlayingCellList],
+  (cellList) => Boolean(cellList.find(cell => cell.id === id)?.isQueen)
+);

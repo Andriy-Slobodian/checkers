@@ -14,3 +14,10 @@
 .noShadow {
     box-shadow: 0 0 0 transparent;
 }
+.queen {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    border: 10px solid darkgoldenrod;
+    margin: 9px;
+}
