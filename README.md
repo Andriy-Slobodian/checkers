@@ -1,6 +1,7 @@
 # Checkers
-
 This is a test task for **Developex**
+
+![alt text](./public/preview.png)
 
 ## How to use
 1. `Node` + `npm` of the latest version should be installed to your computer
