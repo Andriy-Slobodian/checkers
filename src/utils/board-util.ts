@@ -78,3 +78,12 @@ export const getPossibleCaptureIdList = (id: string) => {
 
 export const getCellById = (id: string, list: TCell[]) =>
     list.filter(item => item.id === id)[0];
+
+export const actualizeHighlightedCellList = (id, list) => {
+  return list
+    .filter(cell => {
+      const idDifference = Math.abs(Number(cell.id) - Number(id));
+
+      return idDifference === LEFT_CAPTURE_DIFFERENCE || idDifference === RIGHT_CAPTURE_DIFFERENCE
+    })
+};

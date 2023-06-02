@@ -63,7 +63,7 @@ export const selectIsCheckerMovable = (id: string) => createSelector(
       : captureList.includes(id)
 );
 
-export const selectCheckCapturing = createSelector(
+export const selectCalculatedCaptureList = createSelector(
   [selectBoard, selectIsWhiteTurn],
   (board, isWhiteTurn) => {
     const capturingList = [];

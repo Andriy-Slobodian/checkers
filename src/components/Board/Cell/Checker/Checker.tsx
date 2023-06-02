@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import {FC, useEffect, useRef, useState} from "react";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,12 +18,14 @@ import {
   updateCheckerShadowByCellId,
   updatePossibleGoCellListByCellIdList,
   resetPossibleGoCell,
-  increaseTurnCounter, resetCapturing
+  increaseTurnCounter,
+  resetCapturing
 } from "@slices/board-slice";
 import {
   DEFAULT_CELL_HEIGHT,
-  DEFAULT_CELL_WIDTH
+  DEFAULT_CELL_WIDTH,
 } from "@constants";
+import { actualizeHighlightedCellList } from "@utils/board-util";
 import css from "./Checker.css";
 
 interface Props {
@@ -41,6 +43,7 @@ export const Checker: FC<Props> = ({
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const highlightedForCapturingCellList = useSelector(selectHighlightedCellList);
   const captureList = useSelector(selectCaptureList);
+  const [actualizedCaptureList, setActualizedCaptureList] = useState(highlightedForCapturingCellList);
 
   const isCapturing = captureList.length > 0;
   const checkerColourClass = currentCell.isCheckerBlack ? css.default + ' ' + css.black : css.default;
@@ -71,6 +74,8 @@ export const Checker: FC<Props> = ({
   };
 
   const handleStartDragging = () => {
+    setActualizedCaptureList(actualizeHighlightedCellList(currentCell.id, highlightedForCapturingCellList));
+
     if (!isCapturing) {
       dispatch(updatePossibleGoCellListByCellIdList(possibleGoCellIdList));
     }
@@ -80,12 +85,11 @@ export const Checker: FC<Props> = ({
 
   const handleStopDragging = (e) => {
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
-    const nextMoveCellList = isCapturing ? highlightedForCapturingCellList : possibleGoCellList;
+    const nextMoveCellList = isCapturing ? actualizedCaptureList : possibleGoCellList;
     const newCheckerCell = nextMoveCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
     // New move success
     if (newCheckerCell) {
-      dispatch(increaseTurnCounter());
       dispatch(updateCell({
         ...newCheckerCell,
         checkerCoordinates: {
@@ -103,7 +107,11 @@ export const Checker: FC<Props> = ({
       }
       dispatch(resetPossibleGoCell());
       dispatch(resetCapturing());
+
+      dispatch(increaseTurnCounter());
     }
+
+    setActualizedCaptureList(highlightedForCapturingCellList);
   }
 
   return (

@@ -3,7 +3,7 @@ import { Cell } from "./Cell/Cell";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectBoard,
-  selectCheckCapturing,
+  selectCalculatedCaptureList,
   selectIsBlackFirstMoveTurn,
   selectIsCapturing,
   selectIsWhiteTurn,
@@ -27,7 +27,7 @@ export const Board: FC = () => {
   const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
   const activityList = useSelector(selectActivityList);
 
-  const captureList = useSelector(selectCheckCapturing);
+  const captureList = useSelector(selectCalculatedCaptureList);
   const isCapturing = useSelector(selectIsCapturing);
 
   const whiteClasses = [css.turn, isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
