@@ -41,7 +41,7 @@ export const excludeNonExistingIds = memoize((idList: string[]) => {
   return idList.filter(id => existingIdSet.has(id));
 });
 
-export const getPossibleGoIdList = memoize((id: string, isGoForward: boolean) => {
+export const getPossibleGoIdList = (id: string, isGoForward: boolean) => {
   const leftId = String(
     isGoForward
       ? Number(id) + LEFT_GO_DIFFERENCE
@@ -54,64 +54,27 @@ export const getPossibleGoIdList = memoize((id: string, isGoForward: boolean) =>
   );
 
   return excludeNonExistingIds([leftId, rightId]);
-});
+};
 
-export const getPossibleCaptureIdList = memoize((id: string, isGoForward: boolean) => {
-  const leftId = String(
-    isGoForward
-      ? Number(id) + LEFT_CAPTURE_DIFFERENCE
-      : Number(id) - LEFT_CAPTURE_DIFFERENCE
-  );
-  const rightId = String(
-    isGoForward
-      ? Number(id) + RIGHT_CAPTURE_DIFFERENCE
-      : Number(id) - RIGHT_CAPTURE_DIFFERENCE
-  );
+export const getNeighboursIdList = (id: string) => {
+  const leftTopId = String(Number(id) + LEFT_GO_DIFFERENCE);
+  const leftBottomId = String(Number(id) - LEFT_GO_DIFFERENCE);
+  const rightTopId = String(Number(id) + RIGHT_GO_DIFFERENCE);
+  const rightBottomId = String(Number(id) - RIGHT_GO_DIFFERENCE);
 
-  return excludeNonExistingIds([leftId, rightId]);
-});
+  // return excludeNonExistingIds([leftTopId, rightTopId, leftBottomId, rightBottomId]);
+  return [leftTopId, rightTopId, leftBottomId, rightBottomId];
+};
+
+export const getPossibleCaptureIdList = (id: string) => {
+  const leftTopId = String( Number(id) + LEFT_CAPTURE_DIFFERENCE);
+  const leftBottomId = String( Number(id) - LEFT_CAPTURE_DIFFERENCE);
+  const rightTopId = String(Number(id) + RIGHT_CAPTURE_DIFFERENCE);
+  const rightBottomId = String(Number(id) - RIGHT_CAPTURE_DIFFERENCE);
+
+  // return excludeNonExistingIds([leftTopId, rightTopId, leftBottomId, rightBottomId]);
+  return [leftTopId, rightTopId, leftBottomId, rightBottomId];
+};
 
 export const getCellById = (id: string, list: TCell[]) =>
     list.filter(item => item.id === id)[0];
-
-export const checkCapturing = (board, isWhiteTurn) => {
-  const capturingList = [];
-  const cellList = board.filter(cell => cell.hasCellChecker);
-
-  cellList.forEach(currentCell => {
-    const possibleGoIdList = getPossibleGoIdList(currentCell.id, currentCell.isCheckerBlack);
-    const possibleCaptureIdList = getPossibleCaptureIdList(currentCell.id, currentCell.isCheckerBlack);
-
-    const possibleGoLeft = possibleGoIdList[0]
-      ? getCellById(possibleGoIdList[0], cellList)
-      : null;
-    const possibleGoRight = possibleGoIdList[1]
-      ? getCellById(possibleGoIdList[1], cellList)
-      : null;
-    const captureLeft = possibleCaptureIdList[0]
-      ? getCellById(possibleCaptureIdList[0], board)
-      : null;
-    const captureRight = possibleCaptureIdList[1]
-      ? getCellById(possibleCaptureIdList[1], board)
-      : null;
-
-    if (!isWhiteTurn && currentCell.isCheckerBlack && possibleGoLeft && !possibleGoLeft.isCheckerBlack && captureLeft && !captureLeft.hasCellChecker) {
-      console.log(currentCell.id, possibleGoLeft.id, captureLeft.id);
-      capturingList.push(currentCell, possibleGoLeft, captureLeft);
-    }
-    if (!isWhiteTurn && currentCell.isCheckerBlack && possibleGoRight && !possibleGoRight.isCheckerBlack && captureRight && !captureRight.hasCellChecker) {
-      console.log(currentCell.id, possibleGoRight.id, captureRight.id);
-      capturingList.push(currentCell, possibleGoRight, captureRight);
-    }
-    if (isWhiteTurn && !currentCell.isCheckerBlack && possibleGoLeft && possibleGoLeft.isCheckerBlack && captureLeft && !captureLeft.hasCellChecker) {
-      console.log(currentCell.id, possibleGoLeft.id, captureLeft.id);
-      capturingList.push(currentCell, possibleGoLeft, captureLeft);
-    }
-    if (isWhiteTurn && !currentCell.isCheckerBlack && possibleGoRight && possibleGoRight.isCheckerBlack && captureRight && !captureRight.hasCellChecker) {
-      console.log(currentCell.id, possibleGoRight.id, captureRight.id);
-      capturingList.push(currentCell, possibleGoRight, captureRight);
-    }
-  });
-
-  return capturingList;
-};

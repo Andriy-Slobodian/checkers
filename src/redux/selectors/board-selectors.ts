@@ -1,6 +1,6 @@
-import { createSelector } from "@reduxjs/toolkit";
+import {createSelector, current} from "@reduxjs/toolkit";
 import { store } from "../store";
-import { getPossibleGoIdList } from "@utils/board-util";
+import {getCellById, getNeighboursIdList, getPossibleCaptureIdList, getPossibleGoIdList} from "@utils/board-util";
 
 export const selectBoard = () => store.getState().board.boardState;
 
@@ -41,17 +41,16 @@ export const selectCellListByIdList = (idList: string[]) => createSelector(
     cellList.filter(cell => idList.includes(cell.id) && !cell.hasCellChecker)
 );
 
-export const selectIsCapturingInitialized = createSelector(
-  [selectPlayingCellList],
-  (selectPlayingCellList) =>
-    selectPlayingCellList.filter(cell => cell.isHighlightedForCapturing).length > 0
-);
-
 export const selectHighlightedCellList = createSelector(
   [selectPlayingCellList],
   (selectPlayingCellList) =>
     selectPlayingCellList
       .filter(cell => cell.isHighlightedForCapturing)
+);
+
+export const selectIsCapturing = createSelector(
+  [selectHighlightedCellList],
+  (highlightedCellList) => highlightedCellList.length > 0
 );
 
 export const selectIsCheckerMovable = (id: string) => createSelector(
@@ -61,6 +60,79 @@ export const selectIsCheckerMovable = (id: string) => createSelector(
       ? cellList
           .filter(cell => possibleGoCellIdList.includes(cell.id))
           .filter(cell => !cell.hasCellChecker).length > 0
-      : captureList
-          .filter(cell => cell.id === id).length > 0
+      : captureList.includes(id)
+);
+
+export const selectCheckCapturing = createSelector(
+  [selectBoard, selectIsWhiteTurn],
+  (board, isWhiteTurn) => {
+    const capturingList = [];
+    const cellList = board.filter(cell => cell.hasCellChecker);
+
+    cellList.forEach(currentCell => {
+      const neighbourList = getNeighboursIdList(currentCell.id);
+      const possibleCaptureIdList = getPossibleCaptureIdList(currentCell.id);
+
+      const neighbourLeftTop = neighbourList[0]
+        ? getCellById(neighbourList[0], cellList)
+        : null;
+      const neighbourRightTop = neighbourList[1]
+        ? getCellById(neighbourList[1], cellList)
+        : null;
+      const neighbourLeftBottom = neighbourList[2]
+        ? getCellById(neighbourList[2], cellList)
+        : null;
+      const neighbourRightBottom = neighbourList[3]
+        ? getCellById(neighbourList[3], cellList)
+        : null;
+
+      const captureLeftTop = possibleCaptureIdList[0]
+        ? getCellById(possibleCaptureIdList[0], board)
+        : null;
+      const captureRightTop = possibleCaptureIdList[1]
+        ? getCellById(possibleCaptureIdList[1], board)
+        : null;
+      const captureLeftBottom = possibleCaptureIdList[2]
+        ? getCellById(possibleCaptureIdList[2], board)
+        : null;
+      const captureRightBottom = possibleCaptureIdList[3]
+        ? getCellById(possibleCaptureIdList[3], board)
+        : null;
+
+      if (!isWhiteTurn && currentCell.isCheckerBlack && neighbourLeftTop && !neighbourLeftTop.isCheckerBlack && captureLeftTop && !captureLeftTop.hasCellChecker) {
+        console.log('CASE 1: ', currentCell.id, neighbourLeftTop.id, captureLeftTop.id);
+        capturingList.push(currentCell.id, neighbourLeftTop.id, captureLeftTop.id);
+      }
+      if (isWhiteTurn && !currentCell.isCheckerBlack && neighbourLeftTop && neighbourLeftTop.isCheckerBlack && captureLeftTop && !captureLeftTop.hasCellChecker) {
+        console.log('CASE 2: ', currentCell.id, neighbourLeftTop.id, captureLeftTop.id);
+        capturingList.push(currentCell.id, neighbourLeftTop.id, captureLeftTop.id);
+      }
+      if (!isWhiteTurn && currentCell.isCheckerBlack && neighbourRightTop && !neighbourRightTop.isCheckerBlack && captureRightTop && !captureRightTop.hasCellChecker) {
+        console.log('CASE 3: ', currentCell.id, neighbourRightTop.id, captureRightTop.id);
+        capturingList.push(currentCell.id, neighbourRightTop.id, captureRightTop.id);
+      }
+      if (isWhiteTurn && !currentCell.isCheckerBlack && neighbourRightTop && neighbourRightTop.isCheckerBlack && captureRightTop && !captureRightTop.hasCellChecker) {
+        console.log('CASE 2: ', currentCell.id, neighbourRightTop.id, captureRightTop.id);
+        capturingList.push(currentCell.id, neighbourRightTop.id, captureRightTop.id);
+      }
+      if (!isWhiteTurn && currentCell.isCheckerBlack && neighbourLeftBottom && !neighbourLeftBottom.isCheckerBlack && captureLeftBottom && !captureLeftBottom.hasCellChecker) {
+        console.log('CASE 5: ', currentCell.id, neighbourLeftBottom.id, captureLeftBottom.id);
+        capturingList.push(currentCell.id, neighbourLeftBottom.id, captureLeftBottom.id);
+      }
+      if (isWhiteTurn && !currentCell.isCheckerBlack && neighbourLeftBottom && neighbourLeftBottom.isCheckerBlack && captureLeftBottom && !captureLeftBottom.hasCellChecker) {
+        console.log('CASE 6: ', currentCell.id, neighbourLeftBottom.id, captureLeftBottom.id);
+        capturingList.push(currentCell.id, neighbourLeftBottom.id, captureLeftBottom.id);
+      }
+      if (!isWhiteTurn && currentCell.isCheckerBlack && neighbourRightBottom && !neighbourRightBottom.isCheckerBlack && captureRightBottom && !captureRightBottom.hasCellChecker) {
+        console.log('CASE 7: ', currentCell.id, neighbourRightBottom.id, captureRightBottom.id);
+        capturingList.push(currentCell.id, neighbourRightBottom.id, captureRightBottom.id);
+      }
+      if (isWhiteTurn && !currentCell.isCheckerBlack && neighbourRightBottom && neighbourRightBottom.isCheckerBlack && captureRightBottom && !captureRightBottom.hasCellChecker) {
+        console.log('CASE 8: ', currentCell.id, neighbourRightBottom.id, captureRightBottom.id);
+        capturingList.push(currentCell.id, neighbourRightBottom.id, captureRightBottom.id);
+      }
+    });
+
+    return capturingList;
+  }
 );

@@ -94,7 +94,7 @@ export const boardSlice = createSlice({
       state.turnCounter += 1;
     },
     initCapturing(state, action: PayloadAction<TCell[]>) {
-      state.captureList = action.payload;
+      state.captureList = [ ...action.payload ];
     },
     resetCapturing(state) {
       state.captureList = [];

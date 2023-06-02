@@ -3,8 +3,8 @@ import { Cell } from "./Cell/Cell";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectBoard,
+  selectCheckCapturing,
   selectIsBlackFirstMoveTurn,
-  selectIsCapturingInitialized,
   selectIsWhiteTurn,
 } from "@selectors/board-selectors";
 import {
@@ -15,20 +15,18 @@ import {
   PLAYER_2_NAME
 } from "@constants";
 import { addActivity } from "@slices/activity-slice";
-import { checkCapturing } from "@utils/board-util";
-import css from "./Board.css";
 import { highlightCaptureCellById, initCapturing } from "@slices/board-slice";
-import {selectActivityList} from "@selectors/activity-selectors";
+import { selectActivityList } from "@selectors/activity-selectors";
+import css from "./Board.css";
 
 export const Board: FC = () => {
   const dispatch = useDispatch();
   const board = useSelector(selectBoard);
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
-  const isCapturing = useSelector(selectIsCapturingInitialized);
   const activityList = useSelector(selectActivityList);
 
-  const captureList = checkCapturing(board, isWhiteTurn);
+  const captureList = useSelector(selectCheckCapturing);
 
   const whiteClasses = [css.turn, isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
   const blackClasses = [css.turn, !isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
@@ -40,22 +38,23 @@ export const Board: FC = () => {
   }, [isBlackFirstMoveTurn]);
 
   useEffect(() => {
-    if (!isCapturing && captureList.length > 0) {
+    if (captureList.length > 0) {
       dispatch(initCapturing(captureList));
 
       if (activityList.length < ACTIVITY_MESSAGES_LIMIT) {
         dispatch(addActivity(DEFAULT_ACTIVITY_CAPTURING_TEXT));
       }
 
-      captureList.forEach((cell, index) => {
+      captureList.forEach((id, index) => {
         if ((index + 1) % 3 === 0) {
-          dispatch(highlightCaptureCellById(captureList[index].id));
+          dispatch(highlightCaptureCellById(id));
         }
       });
     }
-  }, [board, isCapturing]);
+  }, [board, captureList]);
 
   // console.log(board);
+  // console.log(captureList);
 
   return (
     <div className={css.container}>

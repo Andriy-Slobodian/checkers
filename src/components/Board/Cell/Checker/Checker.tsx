@@ -42,9 +42,9 @@ export const Checker: FC<Props> = ({
   const highlightedForCapturingCellList = useSelector(selectHighlightedCellList);
   const captureList = useSelector(selectCaptureList);
 
+  const isCapturing = captureList.length > 0;
   const checkerColourClass = currentCell.isCheckerBlack ? css.default + ' ' + css.black : css.default;
   const checkerShadowClass = currentCell.hasCheckerShadow ? checkerColourClass : checkerColourClass + ' ' + css.noShadow;
-  const isCapturing = highlightedForCapturingCellList.length > 0;
 
   // OnMount Checker define & store its coordinates
   useEffect(() => {
@@ -94,11 +94,12 @@ export const Checker: FC<Props> = ({
         },
         hasCellChecker: true,
         isCheckerBlack: currentCell.isCheckerBlack,
+        isHighlightedForCapturing: false,
         hasCheckerShadow: true
       }));
       dispatch(emptyCellById(currentCell.id));
       if (isCapturing) {
-        dispatch(emptyCellById(captureList[1].id));
+        dispatch(emptyCellById(captureList[1]));
       }
       dispatch(resetPossibleGoCell());
       dispatch(resetCapturing());
@@ -110,6 +111,7 @@ export const Checker: FC<Props> = ({
       {!isCheckerMovable && <div ref={checkerRef} className={checkerShadowClass} />}
       {isCheckerMovable && (
         <Draggable
+          // bounds={currentCell.isCheckerBlack ? {top: 0} : {bottom: 0}}
           onStart={
             isWhiteTurn !== currentCell.isCheckerBlack
               ? handleStartDragging
