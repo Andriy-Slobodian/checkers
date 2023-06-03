@@ -1,0 +1,12 @@
+.container {
+    padding: 12px 20px;
+    margin: 0;
+    color: white;
+    background-color: #217476;
+    font-weight: bold;
+    font-size: 1.5em;
+    border-radius: 8px 8px 0 0;
+}
+.container:last-child {
+    border-radius: 0 0 8px 8px;
+}

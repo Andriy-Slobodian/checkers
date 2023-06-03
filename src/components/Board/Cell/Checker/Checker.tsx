@@ -44,8 +44,11 @@ export const Checker: FC<Props> = ({
   const [actualizedCaptureList, setActualizedCaptureList] = useState(highlightedForCapturingCellList);
 
   const isCapturing = captureList.length > 0;
-  const checkerColourClass = currentCell.isCheckerBlack ? css.default + ' ' + css.black : css.default;
-  const checkerShadowClass = currentCell.hasCheckerShadow ? checkerColourClass : checkerColourClass + ' ' + css.noShadow;
+  const checkerClass = [
+    css.default,
+    currentCell.isCheckerBlack ? css.black : '',
+    !currentCell.hasCheckerShadow ? css.noShadow : ''
+  ].join(' ');
 
   // OnMount Checker define & store its coordinates
   useEffect(() => {
@@ -73,7 +76,7 @@ export const Checker: FC<Props> = ({
     const nextMoveCellList = isCapturing ? actualizedCaptureList : possibleGoCellList;
     const newCheckerCell = nextMoveCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
-    // New move success
+    // New move
     if (newCheckerCell) {
       dispatch(updateCell({
         ...newCheckerCell,
@@ -89,7 +92,7 @@ export const Checker: FC<Props> = ({
       }));
       dispatch(emptyCellById(currentCell.id));
       if (isCapturing) {
-        dispatch(emptyCellById(captureList[1]));
+        dispatch(emptyCellById(captureList[1].id));
       }
       dispatch(resetPossibleGoCell());
       dispatch(resetCapturing());
@@ -101,7 +104,7 @@ export const Checker: FC<Props> = ({
   }
 
   const $Checker = (
-    <div ref={checkerRef} className={checkerShadowClass}>
+    <div ref={checkerRef} className={checkerClass}>
       {isCheckerQueen && (
         <div className={css.queen} />
       )}

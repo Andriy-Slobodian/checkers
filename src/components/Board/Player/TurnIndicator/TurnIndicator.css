@@ -1,0 +1,19 @@
+.turn {
+    display: inline-block;
+    float: right;
+    border: 1px solid darkslategrey;
+}
+.turnOn {
+    width: 24px;
+    height: 24px;
+    border-radius: 13px;
+    background-color: #4ce84c;
+    box-shadow: 4px 2px 6px lightblue;
+}
+.turnOff {
+    width: 16px;
+    height: 16px;
+    margin-top: 6px;
+    border-radius: 9px;
+    background-color: #e10a0a;
+}

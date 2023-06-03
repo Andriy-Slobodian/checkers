@@ -10,34 +10,3 @@
     border-bottom: 1px solid grey;
     border-right: 1px solid grey;
 }
-.player {
-    padding: 12px 20px;
-    margin: 0;
-    color: white;
-    background-color: #217476;
-    font-weight: bold;
-    font-size: 1.5em;
-    border-radius: 8px 8px 0 0;
-}
-.player:last-child {
-    border-radius: 0 0 8px 8px;
-}
-.turn {
-    display: inline-block;
-    float: right;
-    border: 1px solid darkslategrey;
-}
-.turnOn {
-    width: 24px;
-    height: 24px;
-    border-radius: 13px;
-    background-color: #4ce84c;
-    box-shadow: 4px 2px 6px lightblue;
-}
-.turnOff {
-    width: 16px;
-    height: 16px;
-    margin-top: 6px;
-    border-radius: 9px;
-    background-color: #e10a0a;
-}

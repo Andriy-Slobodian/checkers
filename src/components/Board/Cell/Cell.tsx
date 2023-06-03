@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useRef} from "react";
+import React, { FC, useEffect, useRef } from "react";
 import { Checker } from "./Checker/Checker";
 import { updateCellCoordinatesById } from "@slices/board-slice";
 import { useDispatch } from "react-redux";
@@ -21,15 +21,15 @@ export const Cell: FC<Props> = ({
   const dispatch = useDispatch();
   const cellRef = useRef(null);
 
-  const cellBackground = css.container + (isPlayingCell ? ' ' + css.painted : '');
-  const cellClasses =
-    cellBackground + (
-      isHighlightedForCapturing
-        ? ' ' + css.capturing
-        : isPossibleGoCell
-          ? ' ' + css.possibleGo
-          : ''
-    );
+  const cellClasses = [
+    css.container,
+    isPlayingCell ? css.painted : '',
+    isHighlightedForCapturing
+      ? css.capturing
+      : isPossibleGoCell
+        ? css.possibleGo
+        : ''
+  ].join(' ');
 
   // OnMount Cell define & store its coordinates
   useEffect(() => {

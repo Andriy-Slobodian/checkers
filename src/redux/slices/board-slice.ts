@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { defineDefaultBoard } from "@utils/board-util";
+import { createDefaultBoard } from "@utils/board-util";
 
 export type TCoordinates = {
   x: number;
@@ -21,7 +21,7 @@ export type TCell = {
 }
 
 const initialState = {
-  boardState: defineDefaultBoard(),
+  boardState: createDefaultBoard(),
   turnCounter: 0,
   captureList: []
 }
@@ -31,7 +31,7 @@ export const boardSlice = createSlice({
   initialState,
   reducers: {
     resetBoard(state){
-      defineDefaultBoard().map(cell => {
+      createDefaultBoard().map(cell => {
         cell.checkerCoordinates = null
       })
     },

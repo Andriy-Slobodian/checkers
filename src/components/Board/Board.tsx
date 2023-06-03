@@ -1,37 +1,70 @@
-import { FC, useEffect } from "react";
+import React, {FC, useEffect, useState} from "react";
 import { Cell } from "./Cell/Cell";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectBoard,
-  selectCalculatedCaptureList,
   selectIsBlackFirstMoveTurn,
   selectIsCapturing,
-  selectIsWhiteTurn,
+  selectIsWhiteTurn, selectPlayingCellList,
 } from "@selectors/board-selectors";
 import {
   ACTIVITY_MESSAGES_LIMIT,
   DEFAULT_ACTIVITY_CAPTURING_TEXT,
   DEFAULT_ACTIVITY_TEXT_PLAYER_2,
+  DEFAULT_TIME_INTERVAL,
   PLAYER_1_NAME,
   PLAYER_2_NAME
 } from "@constants";
 import { addActivity } from "@slices/activity-slice";
-import { highlightCaptureCellById, initCapturing } from "@slices/board-slice";
+import {
+  emptyCellById,
+  highlightCaptureCellById, increaseTurnCounter,
+  initCapturing, resetCapturing,
+  resetPossibleGoCell,
+  updateCell
+} from "@slices/board-slice";
 import { selectActivityList } from "@selectors/activity-selectors";
+import { Player } from "@components/Board/Player/Player";
 import css from "./Board.css";
+import {checkCapturing, getMoveList, isQueen} from "@utils/board-util";
 
 export const Board: FC = () => {
   const dispatch = useDispatch();
   const board = useSelector(selectBoard);
-  const isWhiteTurn = useSelector(selectIsWhiteTurn);
+  const playingCellList = useSelector(selectPlayingCellList);
   const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
   const activityList = useSelector(selectActivityList);
+  const isWhiteTurn = useSelector(selectIsWhiteTurn);
 
-  const captureList = useSelector(selectCalculatedCaptureList);
-  const isCapturing = useSelector(selectIsCapturing);
+  const captureList = checkCapturing(board, isWhiteTurn);
+  const isCapturing = captureList.length > 0;
+  const moveList = getMoveList(playingCellList);
+  const currentCell = isCapturing ? captureList[0] : moveList[0];
+  const newCell = isCapturing ? captureList[2] : moveList[1];
 
-  const whiteClasses = [css.turn, isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
-  const blackClasses = [css.turn, !isWhiteTurn ? css.turnOn : css.turnOff].join(' ');
+  const blackAutoMove = () => {
+    setTimeout(() => {
+      dispatch(updateCell({
+        ...newCell,
+        checkerCoordinates: {
+          x: newCell.cellCoordinates.x + 11,
+          y: newCell.cellCoordinates.y + 11
+        },
+        hasCellChecker: true,
+        isCheckerBlack: currentCell.isCheckerBlack,
+        isHighlightedForCapturing: false,
+        hasCheckerShadow: true,
+        isQueen: currentCell.isQueen || isQueen(newCell.id, currentCell.isCheckerBlack)
+      }));
+      dispatch(emptyCellById(currentCell.id));
+      if (isCapturing) {
+        dispatch(emptyCellById(captureList[1].id));
+      }
+      dispatch(resetPossibleGoCell());
+      dispatch(resetCapturing());
+      dispatch(increaseTurnCounter());
+    }, DEFAULT_TIME_INTERVAL);
+  };
 
   useEffect(() => {
     if (isBlackFirstMoveTurn) {
@@ -50,12 +83,18 @@ export const Board: FC = () => {
   useEffect(() => {
     dispatch(initCapturing(captureList));
 
-    captureList.forEach((id, index) => {
+    captureList.forEach((cell, index) => {
       if ((index + 1) % 3 === 0) {
-        dispatch(highlightCaptureCellById(id));
+        dispatch(highlightCaptureCellById(cell.id));
       }
     });
   }, [board, captureList]);
+
+  useEffect(() => {
+    if (!isWhiteTurn) {
+      blackAutoMove();
+    }
+  }, [isWhiteTurn]);
 
   // console.log(board);
   // console.log(captureList);
@@ -64,10 +103,7 @@ export const Board: FC = () => {
     <div className={css.container}>
       {board.length > 0 && (
         <>
-          <div className={css.player}>
-            {PLAYER_2_NAME}
-            <span className={blackClasses} />
-          </div>
+          <Player name={PLAYER_2_NAME} isAutoPlayer={true} />
 
           <div className={css.board}>
             {board.map((cell) => {
@@ -77,10 +113,7 @@ export const Board: FC = () => {
             })}
           </div>
 
-          <div className={css.player}>
-            {PLAYER_1_NAME}
-            <span className={whiteClasses} />
-          </div>
+          <Player name={PLAYER_1_NAME} />
         </>
       )}
     </div>

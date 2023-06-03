@@ -9,6 +9,8 @@ export const RIGHT_GO_DIFFERENCE = 11;
 export const LEFT_CAPTURE_DIFFERENCE = LEFT_GO_DIFFERENCE * 2;
 export const RIGHT_CAPTURE_DIFFERENCE = RIGHT_GO_DIFFERENCE * 2;
 
+export const DEFAULT_TIME_INTERVAL = 1000;
+
 export const PLAYER_1_NAME = 'Mr.White';
 export const PLAYER_2_NAME = 'Mr.Black';
 
