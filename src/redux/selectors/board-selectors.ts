@@ -8,6 +8,10 @@ export const selectTurnCounter = () => store.getState().board.turnCounter;
 
 export const selectCaptureList = () => store.getState().board.captureList;
 
+export const selectIsDnDStopped = () => store.getState().board.isDnDStopped;
+
+export const selectMoveExtender = () => store.getState().board.moveExtender;
+
 export const selectIsWhiteTurn = createSelector(
   [selectTurnCounter],
   (turnCounter) => !Boolean(turnCounter % 2)

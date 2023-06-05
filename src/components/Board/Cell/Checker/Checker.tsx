@@ -14,10 +14,12 @@ import {
   TCoordinates,
   updateCheckerShadowByCellId,
   updatePossibleGoCellListByCellIdList,
-  increaseTurnCounter,
-  moveChecker
+  moveChecker, changeTurn
 } from "@slices/board-slice";
-import { getActiveCaptureList, isOverlapping } from "@utils/board-util";
+import {
+  getActiveCaptureList,
+  isOverlapping
+} from "@utils/board-util";
 import css from "./Checker.css";
 
 interface Props {
@@ -56,16 +58,19 @@ export const Checker: FC<Props> = ({
   const handleStopDragging = (e) => {
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
     const nextMoveCellList = isCapturing ? [activeCaptureList[2]] : possibleGoCellList;
-    const newCheckerCell = nextMoveCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
+    const newCell = nextMoveCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
     // New move
-    if (newCheckerCell) {
+    if (newCell) {
+      // TODO: Replace Move-logic to some hook
       dispatch(moveChecker({
         fromId: currentCell.id,
-        toId: newCheckerCell.id,
+        toId: newCell.id,
         captureId: captureList[1]?.id || null
       }));
-      dispatch(increaseTurnCounter());
+      if (!isCapturing) {
+        dispatch(changeTurn());
+      }
     }
 
     setActiveCaptureList(captureList);

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createDefaultBoard, defaultPlayingCell, isQueen } from "@utils/board-util";
+import {checkCapturing, createDefaultBoard, isQueen} from "@utils/board-util";
 
 export type TCoordinates = {
   x: number;
@@ -28,7 +28,9 @@ export type TCell = {
 const initialState = {
   boardState: createDefaultBoard(),
   turnCounter: 0,
-  captureList: []
+  captureList: [],
+  isDnDStopped: false,
+  moveExtender: 0
 }
 
 export const boardSlice = createSlice({
@@ -68,7 +70,7 @@ export const boardSlice = createSlice({
         }
       })
     },
-    emptyCellById(state, action: PayloadAction<string>) {
+    /*emptyCellById(state, action: PayloadAction<string>) {
       state.boardState.map(cell => {
           if (cell.id === action.payload) {
             cell.hasCellChecker = false;
@@ -81,19 +83,21 @@ export const boardSlice = createSlice({
           ? action.payload
           : cell
       )
-    },
-    increaseTurnCounter(state) {
+    },*/
+    changeTurn(state) {
       state.turnCounter += 1;
+      state.isDnDStopped = false;
+      state.moveExtender = 0;
     },
     initCapturing(state, action: PayloadAction<TCell[]>) {
       state.captureList = [ ...action.payload ];
     },
-    resetCapturing(state) {
+    /*resetCapturing(state) {
       state.captureList = [];
       state.boardState.map(cell => {
         cell.isHighlightedForCapturing = false;
       })
-    },
+    },*/
     highlightCaptureCellById(state, action: PayloadAction<string>) {
       state.boardState.map(cell =>
         cell.id === action.payload
@@ -127,7 +131,9 @@ export const boardSlice = createSlice({
           cell.hasCellChecker = false;
         }
       });
-      state.captureList = [];
+      state.captureList = checkCapturing(state.boardState, fromCell.isCheckerBlack, toId);
+      state.isDnDStopped = true;
+      state.moveExtender += 1;
     }
   }
 });
@@ -139,11 +145,11 @@ export const {
   updatePossibleGoCellListByCellIdList,
   resetPossibleGoCell,
   updateCoordinatesById,
-  emptyCellById,
-  updateCell,
-  increaseTurnCounter,
+  // emptyCellById,
+  // updateCell,
+  changeTurn,
   initCapturing,
-  resetCapturing,
+  // resetCapturing,
   highlightCaptureCellById,
   moveChecker
 } = boardSlice.actions;

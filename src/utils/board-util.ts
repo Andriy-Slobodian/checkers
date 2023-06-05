@@ -119,7 +119,7 @@ export const isOverlapping = (pointerCoordinates, cellCoordinates) => {
 export const isQueen = (id: string, isBlack: boolean) =>
   isBlack && id.startsWith('8') || !isBlack && id.startsWith('1');
 
-export const checkCapturing = (board: TCell[], isWhiteTurn: boolean) => {
+export const checkCapturing = (board: TCell[], isWhiteTurn: boolean, lastModifiedId?: string) => {
   const capturingList = [];
   const cellList = board.filter(cell => cell.hasCellChecker);
 
@@ -214,4 +214,4 @@ export const getActiveCaptureList = (id: string, list: TCell[]) => {
   const startCaptureIndex = list.findIndex(cell => cell.id === id);
 
   return [list[startCaptureIndex], list[startCaptureIndex + 1], list[startCaptureIndex + 2]];
-}
+};

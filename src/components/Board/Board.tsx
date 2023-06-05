@@ -1,10 +1,11 @@
-import React, { FC, useEffect } from "react";
+import React, {FC, useEffect, useState} from "react";
 import { Cell } from "./Cell/Cell";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectBoard,
   selectIsBlackFirstMoveTurn,
-  selectIsWhiteTurn,
+  selectIsDnDStopped,
+  selectIsWhiteTurn, selectMoveExtender,
   selectPlayingCellList,
 } from "@selectors/board-selectors";
 import {
@@ -17,8 +18,8 @@ import {
 } from "@constants";
 import { addActivity } from "@slices/activity-slice";
 import {
+  changeTurn,
   highlightCaptureCellById,
-  increaseTurnCounter,
   initCapturing,
   moveChecker
 } from "@slices/board-slice";
@@ -34,6 +35,8 @@ export const Board: FC = () => {
   const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
   const activityList = useSelector(selectActivityList);
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
+  const isDnDStopped = useSelector(selectIsDnDStopped);
+  const moveExtender = useSelector(selectMoveExtender);
 
   const captureList = checkCapturing(board, isWhiteTurn);
   const isCapturing = captureList.length > 0;
@@ -48,16 +51,20 @@ export const Board: FC = () => {
         toId: newCell.id,
         captureId: captureList[1]?.id || null
       }));
-      dispatch(increaseTurnCounter());
+      if (!isCapturing) {
+        dispatch(changeTurn());
+      }
     }, DEFAULT_TIME_INTERVAL);
   };
 
+  // Initialize first Black Activity
   useEffect(() => {
     if (isBlackFirstMoveTurn) {
       dispatch(addActivity(DEFAULT_ACTIVITY_TEXT_PLAYER_2));
     }
   }, [isBlackFirstMoveTurn]);
 
+  // Add Capturing Activity
   useEffect(() => {
     if (isCapturing) {
       if (activityList.length < ACTIVITY_MESSAGES_LIMIT) {
@@ -66,6 +73,7 @@ export const Board: FC = () => {
     }
   }, [isCapturing]);
 
+  // Init Capturing/Highlighting
   useEffect(() => {
     dispatch(initCapturing(captureList));
 
@@ -76,14 +84,29 @@ export const Board: FC = () => {
     });
   }, [board, captureList]);
 
+  // Init First Black Move
   useEffect(() => {
     if (!isWhiteTurn) {
       blackAutoMove();
     }
   }, [isWhiteTurn]);
 
+  // Extend Black Move
+  useEffect(() => {
+    if (!isWhiteTurn && isCapturing && moveExtender) {
+      blackAutoMove();
+    }
+  }, [isCapturing, moveExtender]);
+
+  // Finish Move got both Players
+  useEffect(() => {
+    if (isDnDStopped && !isCapturing) {
+      dispatch(changeTurn());
+    }
+  }, [isDnDStopped, isCapturing]);
+
   // console.log(board);
-  // console.log(captureList);
+  // console.log(captureList.map(cell => cell.id));
 
   return (
     <div className={css.container}>
