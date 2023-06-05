@@ -15,7 +15,6 @@ import {
   updateCell,
   emptyCellById,
   TCoordinates,
-  updateCheckerCoordinatesById,
   updateCheckerShadowByCellId,
   updatePossibleGoCellListByCellIdList,
   resetPossibleGoCell,
@@ -32,7 +31,6 @@ export const Checker: FC<Props> = ({
   id
 }) => {
   const dispatch = useDispatch();
-  const checkerRef = useRef(null);
   const currentCell = useSelector(selectCellById(id));
   const possibleGoCellIdList = useSelector(selectPossibleGoCellIdListById(id));
   const possibleGoCellList = useSelector(selectCellListByIdList(possibleGoCellIdList));
@@ -49,17 +47,6 @@ export const Checker: FC<Props> = ({
     currentCell.isCheckerBlack ? css.black : '',
     !currentCell.hasCheckerShadow ? css.noShadow : ''
   ].join(' ');
-
-  // OnMount Checker define & store its coordinates
-  useEffect(() => {
-    dispatch(updateCheckerCoordinatesById({
-      id,
-      coordinates: {
-        x: checkerRef.current.offsetLeft,
-        y: checkerRef.current.offsetTop
-      }
-    }));
-  }, []);
 
   const handleStartDragging = () => {
     setActualizedCaptureList(actualizeHighlightedCellList(currentCell.id, highlightedForCapturingCellList));
@@ -104,7 +91,7 @@ export const Checker: FC<Props> = ({
   }
 
   const $Checker = (
-    <div ref={checkerRef} className={checkerClass}>
+    <div className={checkerClass}>
       {isCheckerQueen && (
         <div className={css.queen} />
       )}

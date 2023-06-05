@@ -1,11 +1,11 @@
-import React, {FC, useEffect, useState} from "react";
+import React, { FC, useEffect } from "react";
 import { Cell } from "./Cell/Cell";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectBoard,
   selectIsBlackFirstMoveTurn,
-  selectIsCapturing,
-  selectIsWhiteTurn, selectPlayingCellList,
+  selectIsWhiteTurn,
+  selectPlayingCellList,
 } from "@selectors/board-selectors";
 import {
   ACTIVITY_MESSAGES_LIMIT,
@@ -25,8 +25,8 @@ import {
 } from "@slices/board-slice";
 import { selectActivityList } from "@selectors/activity-selectors";
 import { Player } from "@components/Board/Player/Player";
+import { checkCapturing, getMoveList, isQueen } from "@utils/board-util";
 import css from "./Board.css";
-import {checkCapturing, getMoveList, isQueen} from "@utils/board-util";
 
 export const Board: FC = () => {
   const dispatch = useDispatch();

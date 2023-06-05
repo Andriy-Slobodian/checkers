@@ -57,21 +57,19 @@ export const boardSlice = createSlice({
         cell.isPossibleGoCell = false;
       })
     },
-    updateCheckerCoordinatesById(state, action: PayloadAction<{id: string, coordinates: TCoordinates}>) {
+    updateCoordinatesById(state, action: PayloadAction<{id: string, coordinates: TCoordinates}>) {
       const { id, coordinates} = action.payload;
 
       state.boardState.map(cell => {
         if (cell.id === id) {
-          cell.checkerCoordinates = coordinates;
-        }
-      })
-    },
-    updateCellCoordinatesById(state, action: PayloadAction<{id: string, coordinates: TCoordinates}>) {
-      const { id, coordinates} = action.payload;
+          cell.cellCoordinates = coordinates;
 
-      state.boardState.map(cell => {
-        if (cell.id === id) {
-          cell.cellCoordinates = coordinates
+          if (cell.hasCellChecker) {
+            cell.checkerCoordinates = {
+              x: coordinates.x + 11,
+              y: coordinates.y + 11
+            }
+          }
         }
       })
     },
@@ -115,6 +113,17 @@ export const boardSlice = createSlice({
           ? cell.isQueen = true
           : cell
       )
+    },
+    move(state, action: PayloadAction<TCell[]>) {
+      state.boardState.map(cell =>
+        cell.id === action.payload[0].id
+          ? action.payload[0]
+          : cell.id === action.payload[1].id
+            ? action.payload[1]
+            : action.payload[2] && cell.id === action.payload[2].id
+              ? action.payload[2]
+              : cell
+      )
     }
   }
 });
@@ -125,8 +134,7 @@ export const {
   resetCheckerShadow,
   updatePossibleGoCellListByCellIdList,
   resetPossibleGoCell,
-  updateCheckerCoordinatesById,
-  updateCellCoordinatesById,
+  updateCoordinatesById,
   emptyCellById,
   updateCell,
   increaseTurnCounter,

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef } from "react";
 import { Checker } from "./Checker/Checker";
-import { updateCellCoordinatesById } from "@slices/board-slice";
+import { updateCoordinatesById } from "@slices/board-slice";
 import { useDispatch } from "react-redux";
 import css from "./Cell.css";
 
@@ -31,9 +31,9 @@ export const Cell: FC<Props> = ({
         : ''
   ].join(' ');
 
-  // OnMount Cell define & store its coordinates
+  // Define & store Cell/Checker coordinates on cell mount
   useEffect(() => {
-    dispatch(updateCellCoordinatesById({
+    dispatch(updateCoordinatesById({
       id,
       coordinates: {
         x: cellRef.current.offsetLeft,

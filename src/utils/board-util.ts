@@ -11,6 +11,19 @@ import {
 } from "@constants";
 import memoize from "lodash/memoize";
 
+export const defaultCell = {
+  id: ``,
+  isPlayingCell: false,
+  hasCellChecker: false,
+  isCheckerBlack: false,
+  checkerCoordinates: null,
+  cellCoordinates: null,
+  hasCheckerShadow: true,
+  isPossibleGoCell: false,
+  isQueen: false,
+  isHighlightedForCapturing: false
+};
+
 export const createDefaultBoard = memoize(() => {
   const board: TCell[] = [];
 
@@ -20,16 +33,11 @@ export const createDefaultBoard = memoize(() => {
       const hasChecker = isPlayingCell && i !== 4 && i !== 5;
 
       board.push({
+        ...defaultCell,
         id: `${i}${j}`,
         isPlayingCell,
         hasCellChecker: hasChecker,
         isCheckerBlack: hasChecker && (i === 1 || i === 2 || i === 3),
-        checkerCoordinates: null,
-        cellCoordinates: null,
-        hasCheckerShadow: true,
-        isPossibleGoCell: false,
-        isQueen: false,
-        isHighlightedForCapturing: false
       });
     }
   }
