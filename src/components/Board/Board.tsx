@@ -17,15 +17,14 @@ import {
 } from "@constants";
 import { addActivity } from "@slices/activity-slice";
 import {
-  emptyCellById,
-  highlightCaptureCellById, increaseTurnCounter,
-  initCapturing, resetCapturing,
-  resetPossibleGoCell,
-  updateCell
+  highlightCaptureCellById,
+  increaseTurnCounter,
+  initCapturing,
+  moveChecker
 } from "@slices/board-slice";
 import { selectActivityList } from "@selectors/activity-selectors";
 import { Player } from "@components/Board/Player/Player";
-import { checkCapturing, getMoveList, isQueen } from "@utils/board-util";
+import { checkCapturing, getMoveList } from "@utils/board-util";
 import css from "./Board.css";
 
 export const Board: FC = () => {
@@ -44,24 +43,11 @@ export const Board: FC = () => {
 
   const blackAutoMove = () => {
     setTimeout(() => {
-      dispatch(updateCell({
-        ...newCell,
-        checkerCoordinates: {
-          x: newCell.cellCoordinates.x + 11,
-          y: newCell.cellCoordinates.y + 11
-        },
-        hasCellChecker: true,
-        isCheckerBlack: currentCell.isCheckerBlack,
-        isHighlightedForCapturing: false,
-        hasCheckerShadow: true,
-        isQueen: currentCell.isQueen || isQueen(newCell.id, currentCell.isCheckerBlack)
+      dispatch(moveChecker({
+        fromId: currentCell.id,
+        toId: newCell.id,
+        captureId: captureList[1]?.id || null
       }));
-      dispatch(emptyCellById(currentCell.id));
-      if (isCapturing) {
-        dispatch(emptyCellById(captureList[1].id));
-      }
-      dispatch(resetPossibleGoCell());
-      dispatch(resetCapturing());
       dispatch(increaseTurnCounter());
     }, DEFAULT_TIME_INTERVAL);
   };

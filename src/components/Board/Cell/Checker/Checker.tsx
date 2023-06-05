@@ -1,27 +1,23 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useState } from "react";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectCaptureList,
   selectCellById,
   selectCellListByIdList,
-  selectHighlightedCellList,
   selectIsCheckerMovable,
   selectIsQueen,
   selectIsWhiteTurn,
   selectPossibleGoCellIdListById
 } from "@selectors/board-selectors";
 import {
-  updateCell,
-  emptyCellById,
   TCoordinates,
   updateCheckerShadowByCellId,
   updatePossibleGoCellListByCellIdList,
-  resetPossibleGoCell,
   increaseTurnCounter,
-  resetCapturing
+  moveChecker
 } from "@slices/board-slice";
-import { actualizeHighlightedCellList, isOverlapping, isQueen } from "@utils/board-util";
+import { getActiveCaptureList, isOverlapping } from "@utils/board-util";
 import css from "./Checker.css";
 
 interface Props {
@@ -36,10 +32,9 @@ export const Checker: FC<Props> = ({
   const possibleGoCellList = useSelector(selectCellListByIdList(possibleGoCellIdList));
   const isCheckerMovable = useSelector(selectIsCheckerMovable(id));
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
-  const highlightedForCapturingCellList = useSelector(selectHighlightedCellList);
   const captureList = useSelector(selectCaptureList);
   const isCheckerQueen = useSelector(selectIsQueen(id));
-  const [actualizedCaptureList, setActualizedCaptureList] = useState(highlightedForCapturingCellList);
+  const [activeCaptureList, setActiveCaptureList] = useState(captureList);
 
   const isCapturing = captureList.length > 0;
   const checkerClass = [
@@ -49,7 +44,7 @@ export const Checker: FC<Props> = ({
   ].join(' ');
 
   const handleStartDragging = () => {
-    setActualizedCaptureList(actualizeHighlightedCellList(currentCell.id, highlightedForCapturingCellList));
+    setActiveCaptureList(getActiveCaptureList(currentCell.id, captureList));
 
     if (!isCapturing) {
       dispatch(updatePossibleGoCellListByCellIdList(possibleGoCellIdList));
@@ -60,34 +55,20 @@ export const Checker: FC<Props> = ({
 
   const handleStopDragging = (e) => {
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
-    const nextMoveCellList = isCapturing ? actualizedCaptureList : possibleGoCellList;
+    const nextMoveCellList = isCapturing ? [activeCaptureList[2]] : possibleGoCellList;
     const newCheckerCell = nextMoveCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
     // New move
     if (newCheckerCell) {
-      dispatch(updateCell({
-        ...newCheckerCell,
-        checkerCoordinates: {
-          x: newCheckerCell.cellCoordinates.x + 11,
-          y: newCheckerCell.cellCoordinates.y + 11
-        },
-        hasCellChecker: true,
-        isCheckerBlack: currentCell.isCheckerBlack,
-        isHighlightedForCapturing: false,
-        hasCheckerShadow: true,
-        isQueen: currentCell.isQueen || isQueen(newCheckerCell.id, currentCell.isCheckerBlack)
+      dispatch(moveChecker({
+        fromId: currentCell.id,
+        toId: newCheckerCell.id,
+        captureId: captureList[1]?.id || null
       }));
-      dispatch(emptyCellById(currentCell.id));
-      if (isCapturing) {
-        dispatch(emptyCellById(captureList[1].id));
-      }
-      dispatch(resetPossibleGoCell());
-      dispatch(resetCapturing());
-
       dispatch(increaseTurnCounter());
     }
 
-    setActualizedCaptureList(highlightedForCapturingCellList);
+    setActiveCaptureList(captureList);
   }
 
   const $Checker = (

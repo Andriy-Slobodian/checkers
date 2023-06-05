@@ -1,10 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createDefaultBoard } from "@utils/board-util";
+import { createDefaultBoard, defaultPlayingCell, isQueen } from "@utils/board-util";
 
 export type TCoordinates = {
   x: number;
   y: number;
+}
+
+export type TMove = {
+  fromId: string;
+  toId: string;
+  captureId?: string;
 }
 
 export type TCell = {
@@ -13,7 +19,6 @@ export type TCell = {
   hasCellChecker: boolean;
   isCheckerBlack: boolean;
   cellCoordinates: TCoordinates | null;
-  checkerCoordinates: TCoordinates | null;
   hasCheckerShadow: boolean;
   isPossibleGoCell: boolean;
   isQueen: boolean;
@@ -31,9 +36,6 @@ export const boardSlice = createSlice({
   initialState,
   reducers: {
     resetBoard(state){
-      createDefaultBoard().map(cell => {
-        cell.checkerCoordinates = null
-      })
     },
     updateCheckerShadowByCellId(state, action: PayloadAction<string>){
       state.boardState.map(cell => {
@@ -63,13 +65,6 @@ export const boardSlice = createSlice({
       state.boardState.map(cell => {
         if (cell.id === id) {
           cell.cellCoordinates = coordinates;
-
-          if (cell.hasCellChecker) {
-            cell.checkerCoordinates = {
-              x: coordinates.x + 11,
-              y: coordinates.y + 11
-            }
-          }
         }
       })
     },
@@ -77,7 +72,6 @@ export const boardSlice = createSlice({
       state.boardState.map(cell => {
           if (cell.id === action.payload) {
             cell.hasCellChecker = false;
-            cell.checkerCoordinates = null;
           }
         })
     },
@@ -114,16 +108,26 @@ export const boardSlice = createSlice({
           : cell
       )
     },
-    move(state, action: PayloadAction<TCell[]>) {
-      state.boardState.map(cell =>
-        cell.id === action.payload[0].id
-          ? action.payload[0]
-          : cell.id === action.payload[1].id
-            ? action.payload[1]
-            : action.payload[2] && cell.id === action.payload[2].id
-              ? action.payload[2]
-              : cell
-      )
+    moveChecker(state, action: PayloadAction<TMove>) {
+      const { fromId, toId, captureId} = action.payload;
+      const fromCell = { ...state.boardState.find(cell => cell.id === fromId)};
+
+      state.boardState.map(cell => {
+        cell.isPossibleGoCell = false;
+        cell.isHighlightedForCapturing = false;
+        cell.hasCheckerShadow = true;
+
+        if (cell.id === toId) {
+          cell.hasCellChecker = true;
+          cell.isCheckerBlack = fromCell.isCheckerBlack;
+          cell.isQueen = fromCell.isQueen || isQueen(cell.id, fromCell.isCheckerBlack);
+        }
+
+        if (cell.id === fromId || cell.id === captureId) {
+          cell.hasCellChecker = false;
+        }
+      });
+      state.captureList = [];
     }
   }
 });
@@ -140,5 +144,6 @@ export const {
   increaseTurnCounter,
   initCapturing,
   resetCapturing,
-  highlightCaptureCellById
+  highlightCaptureCellById,
+  moveChecker
 } = boardSlice.actions;
