@@ -1,12 +1,11 @@
 import {createSelector, current} from "@reduxjs/toolkit";
 import { store } from "../store";
 import {getCellById, getNeighboursIdList, getPossibleCaptureIdList, getPossibleGoIdList} from "@utils/board-util";
+import {TCell} from "@slices/board-slice";
 
 export const selectBoard = () => store.getState().board.boardState;
 
 export const selectTurnCounter = () => store.getState().board.turnCounter;
-
-export const selectCaptureList = () => store.getState().board.captureList;
 
 export const selectStopDnDId = () => store.getState().board.stopDnDId;
 
@@ -67,9 +66,9 @@ export const selectIsCapturing = createSelector(
   (highlightedCellList) => highlightedCellList.length > 0
 );
 
-export const selectIsCheckerMovable = (id: string) => createSelector(
-  [selectPlayingCellList, selectPossibleGoCellIdListById(id), selectCaptureList],
-  (cellList, possibleGoCellIdList, captureList) =>
+export const selectIsCheckerMovable = (id: string, captureList: TCell[]) => createSelector(
+  [selectPlayingCellList, selectPossibleGoCellIdListById(id)],
+  (cellList, possibleGoCellIdList) =>
     captureList.length === 0
       ? cellList
           .filter(cell => possibleGoCellIdList.includes(cell.id))

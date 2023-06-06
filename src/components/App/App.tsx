@@ -7,6 +7,7 @@ import { Activities } from "@components/Activities/Activities";
 import css from "./App.css";
 
 export const App: FC = () => {
+  // Hooks
   const dispatch = useDispatch();
 
   const handleMouseUp = (e: SyntheticEvent) => {

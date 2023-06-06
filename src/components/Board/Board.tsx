@@ -18,18 +18,15 @@ import {
   PLAYER_2_NAME
 } from "@constants";
 import { addActivity } from "@slices/activity-slice";
-import {
-  changeTurn,
-  highlightCaptureCellById,
-  initCapturing,
-  moveChecker
-} from "@slices/board-slice";
+import { changeTurn, highlightCaptureCellById } from "@slices/board-slice";
 import { selectActivityList } from "@selectors/activity-selectors";
 import { Player } from "@components/Board/Player/Player";
-import { checkCapturing, getMoveList } from "@utils/board-util";
+import { getMoveList } from "@utils/board-util";
+import { useMove } from "@hooks/useMove";
 import css from "./Board.css";
 
 export const Board: FC = () => {
+  // Hooks
   const dispatch = useDispatch();
   const board = useSelector(selectBoard);
   const playingCellList = useSelector(selectPlayingCellList);
@@ -38,23 +35,22 @@ export const Board: FC = () => {
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const stopDnDId = useSelector(selectStopDnDId);
   const moveExtender = useSelector(selectMoveExtender);
+  const { move, captureList, isCapturing } = useMove();
 
-  const captureList = checkCapturing(board, isWhiteTurn);
-  const isCapturing = captureList.length > 0;
+  // Variables
   const moveList = getMoveList(playingCellList);
   const currentCell = isCapturing ? captureList[0] : moveList[0];
   const newCell = isCapturing ? captureList[2] : moveList[1];
 
+  // console.log('isWhiteTurn', isWhiteTurn, moveList.map(cell => cell.id));
+
   const blackAutoMove = () => {
     setTimeout(() => {
-      dispatch(moveChecker({
+      move({
         fromId: currentCell.id,
         toId: newCell.id,
         captureId: captureList[1]?.id || null
-      }));
-      if (!isCapturing) {
-        dispatch(changeTurn());
-      }
+      });
     }, DEFAULT_TIME_INTERVAL);
   };
 
@@ -76,8 +72,6 @@ export const Board: FC = () => {
 
   // Init Capturing/Highlighting
   useEffect(() => {
-    dispatch(initCapturing(captureList));
-
     captureList.forEach((cell, index) => {
       if ((index + 1) % 3 === 0) {
         dispatch(highlightCaptureCellById(cell.id));

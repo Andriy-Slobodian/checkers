@@ -18,9 +18,11 @@ export const Cell: FC<Props> = ({
   isPossibleGoCell,
   isHighlightedForCapturing
 }) => {
+  // Hooks
   const dispatch = useDispatch();
   const cellRef = useRef(null);
 
+  // Variables
   const cellClasses = [
     css.container,
     isPlayingCell ? css.painted : '',

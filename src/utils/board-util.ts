@@ -119,7 +119,7 @@ export const isOverlapping = (pointerCoordinates, cellCoordinates) => {
 export const isQueen = (id: string, isBlack: boolean) =>
   isBlack && id.startsWith('8') || !isBlack && id.startsWith('1');
 
-export const checkCapturing = (board: TCell[], isWhiteTurn: boolean, lastModifiedId?: string) => {
+export const checkCapturing = (board: TCell[], isWhiteTurn: boolean) => {
   const capturingList = [];
   const cellList = board.filter(cell => cell.hasCellChecker);
 
@@ -209,10 +209,22 @@ export const getMoveList = (playingIdList: TCell[]) => {
 
   return moveList;
 };
+export const isCorrectMove = (oldPositionID: string, newPositionId: string) => {
+  const idDifference = Math.abs(Number(oldPositionID) - Number(newPositionId));
 
-export const getCapturedId = (id: string, list: TCell[]) => {
-  const startCaptureIndex = list.findIndex(cell => cell.id === id);
-  const isCapturing = list.length > 0;
-
-  return isCapturing ? list[startCaptureIndex - 1].id : null;
+  return idDifference === LEFT_CAPTURE_DIFFERENCE || idDifference === RIGHT_CAPTURE_DIFFERENCE;
 };
+
+export const getCapturedId = (oldPositionID: string, newPositionId: string) => {
+  const oldRow = Number(oldPositionID.charAt(0));
+  const oldColumn = Number(oldPositionID.charAt(1));
+
+  const newRow = Number(newPositionId.charAt(0));
+  const newColumn = Number(newPositionId.charAt(1));
+
+  const middleRow = oldRow > newRow ? oldRow - 1 : oldRow + 1;
+  const middleColumn = oldColumn > newColumn ? oldColumn - 1 : oldColumn + 1;
+
+  return `${middleRow}${middleColumn}`;
+};
+
