@@ -1,11 +1,12 @@
-import React, {FC, useEffect, useState} from "react";
+import React, { FC, useEffect } from "react";
 import { Cell } from "./Cell/Cell";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectBoard,
   selectIsBlackFirstMoveTurn,
-  selectIsDnDStopped,
-  selectIsWhiteTurn, selectMoveExtender,
+  selectStopDnDId,
+  selectIsWhiteTurn,
+  selectMoveExtender,
   selectPlayingCellList,
 } from "@selectors/board-selectors";
 import {
@@ -35,7 +36,7 @@ export const Board: FC = () => {
   const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
   const activityList = useSelector(selectActivityList);
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
-  const isDnDStopped = useSelector(selectIsDnDStopped);
+  const stopDnDId = useSelector(selectStopDnDId);
   const moveExtender = useSelector(selectMoveExtender);
 
   const captureList = checkCapturing(board, isWhiteTurn);
@@ -98,12 +99,14 @@ export const Board: FC = () => {
     }
   }, [isCapturing, moveExtender]);
 
-  // Finish Move got both Players
+  // Finish Move for both Players
   useEffect(() => {
-    if (isDnDStopped && !isCapturing) {
+    const isCapturingForActiveChecker = captureList.map(cell => cell.id).includes(stopDnDId);
+
+    if (stopDnDId && !isCapturingForActiveChecker) {
       dispatch(changeTurn());
     }
-  }, [isDnDStopped, isCapturing]);
+  }, [stopDnDId, isCapturing]);
 
   // console.log(board);
   // console.log(captureList.map(cell => cell.id));

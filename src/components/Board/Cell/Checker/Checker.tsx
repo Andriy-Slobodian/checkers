@@ -11,15 +11,13 @@ import {
   selectPossibleGoCellIdListById
 } from "@selectors/board-selectors";
 import {
+  changeTurn,
+  moveChecker,
   TCoordinates,
   updateCheckerShadowByCellId,
-  updatePossibleGoCellListByCellIdList,
-  moveChecker, changeTurn
+  updatePossibleGoCellListByCellIdList
 } from "@slices/board-slice";
-import {
-  getActiveCaptureList,
-  isOverlapping
-} from "@utils/board-util";
+import {getCapturedId, isOverlapping} from "@utils/board-util";
 import css from "./Checker.css";
 
 interface Props {
@@ -36,7 +34,6 @@ export const Checker: FC<Props> = ({
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const captureList = useSelector(selectCaptureList);
   const isCheckerQueen = useSelector(selectIsQueen(id));
-  const [activeCaptureList, setActiveCaptureList] = useState(captureList);
 
   const isCapturing = captureList.length > 0;
   const checkerClass = [
@@ -46,8 +43,6 @@ export const Checker: FC<Props> = ({
   ].join(' ');
 
   const handleStartDragging = () => {
-    setActiveCaptureList(getActiveCaptureList(currentCell.id, captureList));
-
     if (!isCapturing) {
       dispatch(updatePossibleGoCellListByCellIdList(possibleGoCellIdList));
     }
@@ -57,8 +52,8 @@ export const Checker: FC<Props> = ({
 
   const handleStopDragging = (e) => {
     const pointerCoordinates: TCoordinates = {x: e.clientX, y: e.clientY};
-    const nextMoveCellList = isCapturing ? [activeCaptureList[2]] : possibleGoCellList;
-    const newCell = nextMoveCellList.find(cell => isOverlapping(pointerCoordinates, cell.cellCoordinates));
+    const nextMoveCellList = isCapturing ? captureList : possibleGoCellList;
+    const newCell = nextMoveCellList.find(cell => cell && isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
     // New move
     if (newCell) {
@@ -66,14 +61,12 @@ export const Checker: FC<Props> = ({
       dispatch(moveChecker({
         fromId: currentCell.id,
         toId: newCell.id,
-        captureId: captureList[1]?.id || null
+        captureId: getCapturedId(newCell.id, captureList)
       }));
       if (!isCapturing) {
         dispatch(changeTurn());
       }
     }
-
-    setActiveCaptureList(captureList);
   }
 
   const $Checker = (

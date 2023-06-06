@@ -8,7 +8,7 @@ export const selectTurnCounter = () => store.getState().board.turnCounter;
 
 export const selectCaptureList = () => store.getState().board.captureList;
 
-export const selectIsDnDStopped = () => store.getState().board.isDnDStopped;
+export const selectStopDnDId = () => store.getState().board.stopDnDId;
 
 export const selectMoveExtender = () => store.getState().board.moveExtender;
 

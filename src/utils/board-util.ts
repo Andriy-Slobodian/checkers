@@ -210,8 +210,9 @@ export const getMoveList = (playingIdList: TCell[]) => {
   return moveList;
 };
 
-export const getActiveCaptureList = (id: string, list: TCell[]) => {
+export const getCapturedId = (id: string, list: TCell[]) => {
   const startCaptureIndex = list.findIndex(cell => cell.id === id);
+  const isCapturing = list.length > 0;
 
-  return [list[startCaptureIndex], list[startCaptureIndex + 1], list[startCaptureIndex + 2]];
+  return isCapturing ? list[startCaptureIndex - 1].id : null;
 };

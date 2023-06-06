@@ -29,7 +29,7 @@ const initialState = {
   boardState: createDefaultBoard(),
   turnCounter: 0,
   captureList: [],
-  isDnDStopped: false,
+  stopDnDId: null,
   moveExtender: 0
 }
 
@@ -86,7 +86,7 @@ export const boardSlice = createSlice({
     },*/
     changeTurn(state) {
       state.turnCounter += 1;
-      state.isDnDStopped = false;
+      state.stopDnDId = null;
       state.moveExtender = 0;
     },
     initCapturing(state, action: PayloadAction<TCell[]>) {
@@ -132,7 +132,7 @@ export const boardSlice = createSlice({
         }
       });
       state.captureList = checkCapturing(state.boardState, fromCell.isCheckerBlack, toId);
-      state.isDnDStopped = true;
+      state.stopDnDId = toId;
       state.moveExtender += 1;
     }
   }
