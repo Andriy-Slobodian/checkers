@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,10 +11,10 @@ import {
 } from "@selectors/board-selectors";
 import {
   TCoordinates,
-  updateCheckerShadowByCellId,
-  updatePossibleGoCellListByCellIdList
+  updateCheckerShadow,
+  updatePossibleGoList
 } from "@slices/board-slice";
-import {getCapturedId, isCorrectMove, isOverlapping} from "@utils/board-util";
+import { getCapturedId, isCorrectCaptureMove, isOverlapping } from "@utils/board-util";
 import { useMove } from "@hooks/useMove";
 import css from "./Checker.css";
 
@@ -31,7 +31,7 @@ export const Checker: FC<Props> = ({
   const possibleGoCellList = useSelector(selectCellListByIdList(possibleGoCellIdList));
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const isCheckerQueen = useSelector(selectIsQueen(id));
-  const { move, captureList, isCapturing } = useMove();
+  const { move, captureList, isCapturing} = useMove();
   const isCheckerMovable = useSelector(selectIsCheckerMovable(id, captureList));
 
   // Variables
@@ -43,10 +43,10 @@ export const Checker: FC<Props> = ({
 
   const handleStartDragging = () => {
     if (!isCapturing) {
-      dispatch(updatePossibleGoCellListByCellIdList(possibleGoCellIdList));
+      dispatch(updatePossibleGoList(possibleGoCellIdList));
     }
 
-    dispatch(updateCheckerShadowByCellId(id));
+    dispatch(updateCheckerShadow(id));
   }
 
   const handleStopDragging = (e) => {
@@ -55,7 +55,7 @@ export const Checker: FC<Props> = ({
     const newCell = nextMoveCellList.find(cell => cell && isOverlapping(pointerCoordinates, cell.cellCoordinates));
 
     // New move
-    if (newCell && !isCapturing || newCell && isCorrectMove(id, newCell.id)) {
+    if (newCell && !isCapturing || newCell && isCorrectCaptureMove(id, newCell.id)) {
       move({
         fromId: currentCell.id,
         toId: newCell.id,

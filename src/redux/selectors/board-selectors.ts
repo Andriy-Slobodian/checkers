@@ -9,6 +9,8 @@ export const selectTurnCounter = () => store.getState().board.turnCounter;
 
 export const selectStopDnDId = () => store.getState().board.stopDnDId;
 
+export const selectIsGameOver = () => store.getState().board.isGameOver;
+
 export const selectMoveExtender = () => store.getState().board.moveExtender;
 
 export const selectIsWhiteTurn = createSelector(
@@ -26,14 +28,14 @@ export const selectPlayingCellList = createSelector(
   (board) => board.filter(cell => cell.isPlayingCell)
 );
 
-export const selectBlackPlayingCellList = createSelector(
+export const selectBlackAmount = createSelector(
   [selectPlayingCellList],
-  (playingCellList) => playingCellList.filter(cell => cell.isCheckerBlack)
+  (cellList) => cellList.filter(cell => cell.hasCellChecker && cell.isCheckerBlack).length
 );
 
-export const selectWhitePlayingCellList = createSelector(
+export const selectWhiteAmount = createSelector(
   [selectPlayingCellList],
-  (playingCellList) => playingCellList.filter(cell => !cell.isCheckerBlack)
+  (cellList) => cellList.filter(cell => cell.hasCellChecker && !cell.isCheckerBlack).length
 );
 
 export const selectCellById = (id: string) => createSelector(
@@ -52,18 +54,6 @@ export const selectCellListByIdList = (idList: string[]) => createSelector(
   [selectPlayingCellList],
   (cellList) =>
     cellList.filter(cell => idList.includes(cell.id) && !cell.hasCellChecker)
-);
-
-export const selectHighlightedCellList = createSelector(
-  [selectPlayingCellList],
-  (selectPlayingCellList) =>
-    selectPlayingCellList
-      .filter(cell => cell.isHighlightedForCapturing)
-);
-
-export const selectIsCapturing = createSelector(
-  [selectHighlightedCellList],
-  (highlightedCellList) => highlightedCellList.length > 0
 );
 
 export const selectIsCheckerMovable = (id: string, captureList: TCell[]) => createSelector(

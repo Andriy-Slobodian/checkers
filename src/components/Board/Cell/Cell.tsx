@@ -1,7 +1,5 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC } from "react";
 import { Checker } from "./Checker/Checker";
-import { updateCoordinatesById } from "@slices/board-slice";
-import { useDispatch } from "react-redux";
 import css from "./Cell.css";
 
 interface Props {
@@ -18,10 +16,6 @@ export const Cell: FC<Props> = ({
   isPossibleGoCell,
   isHighlightedForCapturing
 }) => {
-  // Hooks
-  const dispatch = useDispatch();
-  const cellRef = useRef(null);
-
   // Variables
   const cellClasses = [
     css.container,
@@ -33,19 +27,8 @@ export const Cell: FC<Props> = ({
         : ''
   ].join(' ');
 
-  // Define & store Cell/Checker coordinates on cell mount
-  useEffect(() => {
-    dispatch(updateCoordinatesById({
-      id,
-      coordinates: {
-        x: cellRef.current.offsetLeft,
-        y: cellRef.current.offsetTop
-      }
-    }));
-  }, []);
-
   return (
-    <div className={cellClasses} ref={cellRef}>
+    <div className={cellClasses}>
       {hasCellChecker && (
         <Checker id={id} />
       )}

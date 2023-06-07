@@ -1,4 +1,4 @@
-import { TCell } from "@slices/board-slice";
+import {TCell, TCoordinates} from "@slices/board-slice";
 import {
   DEFAULT_CELL_HEIGHT,
   DEFAULT_CELL_WIDTH,
@@ -23,21 +23,23 @@ export const defaultCell = {
   isHighlightedForCapturing: false
 };
 
-export const defaultPlayingCell = {
-  ...defaultCell,
-  isPlayingCell: true,
-};
-
-export const createDefaultBoard = memoize(() => {
+export const createDefaultBoard = memoize((coorditanes: TCoordinates = null) => {
   const board: TCell[] = [];
 
   for (let i = 1; i <= DEFAULT_COLUMN_AMOUNT; i++) {
     for (let j = 1; j <= DEFAULT_ROW_AMOUNT; j++) {
       const isPlayingCell = i % 2 === 0 ? j % 2 !== 0 : j % 2 === 0;
       const hasChecker = isPlayingCell && i !== 4 && i !== 5;
+      const cellCoordinates = coorditanes && isPlayingCell
+        ? {
+            x: j * 100 + coorditanes.x - 100,
+            y: i * 100 + coorditanes.y - 100
+          }
+        : null;
 
       board.push({
         ...defaultCell,
+        cellCoordinates,
         id: `${i}${j}`,
         isPlayingCell,
         hasCellChecker: hasChecker,
@@ -46,7 +48,7 @@ export const createDefaultBoard = memoize(() => {
     }
   }
 
-  return board;
+  return [...board];
 });
 
 export const excludeNonExistingIds = memoize((idList: string[]) => {
@@ -92,17 +94,6 @@ export const getPossibleCaptureIdList = (id: string) => {
 export const getCellById = (id: string, list: TCell[]) =>
     list.filter(item => item.id === id)[0];
 
-/*
-export const actualizeHighlightedCellList = (id, list) => {
-  return list
-    .filter(cell => {
-      const idDifference = Math.abs(Number(cell.id) - Number(id));
-
-      return idDifference === LEFT_CAPTURE_DIFFERENCE || idDifference === RIGHT_CAPTURE_DIFFERENCE
-    })
-};
-*/
-
 export const isOverlapping = (pointerCoordinates, cellCoordinates) => {
   if (!pointerCoordinates || !cellCoordinates) {
     return false;
@@ -120,7 +111,7 @@ export const isQueen = (id: string, isBlack: boolean) =>
   isBlack && id.startsWith('8') || !isBlack && id.startsWith('1');
 
 export const checkCapturing = (board: TCell[], isWhiteTurn: boolean) => {
-  const capturingList = [];
+  const capturingList: TCell[] = [];
   const cellList = board.filter(cell => cell.hasCellChecker);
 
   cellList.forEach(currentCell => {
@@ -195,7 +186,7 @@ export const getMoveList = (playingIdList: TCell[]) => {
 
   for (let i = 0; i < playingIdList.length; i++) {
     if (playingIdList[i].hasCellChecker && playingIdList[i].isCheckerBlack) {
-      const possibleGoIdList = getPossibleGoIdList(playingIdList[i].id, true);
+      const possibleGoIdList = getPossibleGoIdList(playingIdList[i].id, playingIdList[i].isCheckerBlack);
       const moveCell = playingIdList.find(
         cell => !cell.hasCellChecker && (cell.id === possibleGoIdList[0] || cell.id === possibleGoIdList[1])
       );
@@ -209,7 +200,7 @@ export const getMoveList = (playingIdList: TCell[]) => {
 
   return moveList;
 };
-export const isCorrectMove = (oldPositionID: string, newPositionId: string) => {
+export const isCorrectCaptureMove = (oldPositionID: string, newPositionId: string) => {
   const idDifference = Math.abs(Number(oldPositionID) - Number(newPositionId));
 
   return idDifference === LEFT_CAPTURE_DIFFERENCE || idDifference === RIGHT_CAPTURE_DIFFERENCE;
@@ -228,3 +219,7 @@ export const getCapturedId = (oldPositionID: string, newPositionId: string) => {
   return `${middleRow}${middleColumn}`;
 };
 
+export const isGameOver = () => {
+
+  return false;
+};

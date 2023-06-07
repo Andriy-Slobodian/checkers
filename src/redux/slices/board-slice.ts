@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { checkCapturing, createDefaultBoard, isQueen } from "@utils/board-util";
+import { createDefaultBoard, isQueen } from "@utils/board-util";
 
 export type TCoordinates = {
   x: number;
@@ -26,19 +26,28 @@ export type TCell = {
 }
 
 const initialState = {
-  boardState: createDefaultBoard(),
+  boardState: [],
   turnCounter: 0,
   stopDnDId: null,
-  moveExtender: 0
+  moveExtender: 0,
+  isGameOver: false
 }
 
 export const boardSlice = createSlice({
   name: 'board',
   initialState,
   reducers: {
-    resetBoard(state){
+    createBoard(state, action: PayloadAction<TCoordinates>) {
+      state.boardState = createDefaultBoard(action.payload);
+      state.turnCounter = 0;
+      state.stopDnDId = null;
+      state.moveExtender = 0;
+      state.isGameOver = false;
     },
-    updateCheckerShadowByCellId(state, action: PayloadAction<string>){
+    resetBoard(state){
+      state.boardState = [];
+    },
+    updateCheckerShadow(state, action: PayloadAction<string>){
       state.boardState.map(cell => {
         cell.hasCheckerShadow = cell.id !== action.payload;
       })
@@ -48,59 +57,32 @@ export const boardSlice = createSlice({
         cell.hasCheckerShadow = true;
       })
     },
-    updatePossibleGoCellListByCellIdList(state, action: PayloadAction<string[]>) {
+    updatePossibleGoList(state, action: PayloadAction<string[]>) {
       state.boardState.map(cell => {
         if (action.payload.includes(cell.id) && !cell.hasCellChecker) {
           cell.isPossibleGoCell = true;
         }
       })
     },
-    resetPossibleGoCell(state) {
+    resetPossibleGoList(state) {
       state.boardState.map(cell => {
         cell.isPossibleGoCell = false;
       })
     },
-    updateCoordinatesById(state, action: PayloadAction<{id: string, coordinates: TCoordinates}>) {
-      const { id, coordinates} = action.payload;
-
-      state.boardState.map(cell => {
-        if (cell.id === id) {
-          cell.cellCoordinates = coordinates;
-        }
-      })
-    },
-    /*
-    updateCell(state, action: PayloadAction<TCell>) {
-      state.boardState = state.boardState.map(cell =>
-        cell.id === action.payload.id
-          ? action.payload
-          : cell
-      )
-    },
-    emptyCellById(state, action: PayloadAction<string>) {
-      state.boardState.map(cell => {
-          if (cell.id === action.payload) {
-            cell.hasCellChecker = false;
-          }
-        })
-    },
-    */
     changeTurn(state) {
       state.turnCounter += 1;
       state.stopDnDId = null;
       state.moveExtender = 0;
     },
-    highlightCaptureCellById(state, action: PayloadAction<string>) {
+    resetTurn(state) {
+      state.turnCounter = 0;
+      state.stopDnDId = null;
+      state.moveExtender = 0;
+    },
+    highlightCapturing(state, action: PayloadAction<string>) {
       state.boardState.map(cell =>
         cell.id === action.payload
           ? cell.isHighlightedForCapturing = true
-          : cell
-      )
-    },
-    setQueen(state, action: PayloadAction<string>) {
-      state.boardState.map(cell =>
-        cell.id === action.payload
-          ? cell.isQueen = true
           : cell
       )
     },
@@ -125,20 +107,23 @@ export const boardSlice = createSlice({
       });
       state.stopDnDId = toId;
       state.moveExtender += 1;
+    },
+    gameOver(state) {
+      state.isGameOver = true;
     }
   }
 });
 
 export const {
+  createBoard,
   resetBoard,
-  updateCheckerShadowByCellId,
+  updateCheckerShadow,
   resetCheckerShadow,
-  updatePossibleGoCellListByCellIdList,
-  resetPossibleGoCell,
-  updateCoordinatesById,
-  // emptyCellById,
-  // updateCell,
+  updatePossibleGoList,
+  resetPossibleGoList,
   changeTurn,
-  highlightCaptureCellById,
-  moveChecker
+  resetTurn,
+  highlightCapturing,
+  moveChecker,
+  gameOver
 } = boardSlice.actions;

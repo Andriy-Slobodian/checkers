@@ -1,13 +1,12 @@
-import React, { FC, useEffect } from "react";
-import { Cell } from "./Cell/Cell";
+import React, { FC, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useMove } from "@hooks/useMove";
 import {
   selectBoard,
   selectIsBlackFirstMoveTurn,
   selectStopDnDId,
   selectIsWhiteTurn,
-  selectMoveExtender,
-  selectPlayingCellList,
+  selectMoveExtender
 } from "@selectors/board-selectors";
 import {
   ACTIVITY_MESSAGES_LIMIT,
@@ -18,41 +17,47 @@ import {
   PLAYER_2_NAME
 } from "@constants";
 import { addActivity } from "@slices/activity-slice";
-import { changeTurn, highlightCaptureCellById } from "@slices/board-slice";
+import { changeTurn, createBoard, highlightCapturing } from "@slices/board-slice";
 import { selectActivityList } from "@selectors/activity-selectors";
+import { Cell } from "./Cell/Cell";
 import { Player } from "@components/Board/Player/Player";
-import { getMoveList } from "@utils/board-util";
-import { useMove } from "@hooks/useMove";
 import css from "./Board.css";
 
 export const Board: FC = () => {
   // Hooks
   const dispatch = useDispatch();
   const board = useSelector(selectBoard);
-  const playingCellList = useSelector(selectPlayingCellList);
   const isBlackFirstMoveTurn = useSelector(selectIsBlackFirstMoveTurn);
   const activityList = useSelector(selectActivityList);
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const stopDnDId = useSelector(selectStopDnDId);
   const moveExtender = useSelector(selectMoveExtender);
-  const { move, captureList, isCapturing } = useMove();
+  const { move, captureList, isCapturing, moveList } = useMove();
+  const boardRef = useRef(null);
 
   // Variables
-  const moveList = getMoveList(playingCellList);
   const currentCell = isCapturing ? captureList[0] : moveList[0];
   const newCell = isCapturing ? captureList[2] : moveList[1];
-
-  // console.log('isWhiteTurn', isWhiteTurn, moveList.map(cell => cell.id));
 
   const blackAutoMove = () => {
     setTimeout(() => {
       move({
-        fromId: currentCell.id,
-        toId: newCell.id,
+        fromId: currentCell?.id,
+        toId: newCell?.id,
         captureId: captureList[1]?.id || null
       });
     }, DEFAULT_TIME_INTERVAL);
   };
+
+  // Create Board with Start coordinates for DnD
+  useEffect(() => {
+    if (board.length === 0) {
+      dispatch(createBoard({
+        x: boardRef.current.offsetLeft,
+        y: boardRef.current.offsetTop
+      }));
+    }
+  }, [board.length]);
 
   // Initialize first Black Activity
   useEffect(() => {
@@ -74,7 +79,7 @@ export const Board: FC = () => {
   useEffect(() => {
     captureList.forEach((cell, index) => {
       if ((index + 1) % 3 === 0) {
-        dispatch(highlightCaptureCellById(cell.id));
+        dispatch(highlightCapturing(cell.id));
       }
     });
   }, [board, captureList]);
@@ -107,21 +112,17 @@ export const Board: FC = () => {
 
   return (
     <div className={css.container}>
-      {board.length > 0 && (
-        <>
-          <Player name={PLAYER_2_NAME} isAutoPlayer={true} />
+      <Player name={PLAYER_2_NAME} isAutoPlayer={true} />
 
-          <div className={css.board}>
-            {board.map((cell) => {
-              return (
-                <Cell key={cell.id} {...cell} />
-              );
-            })}
-          </div>
+      <div ref={boardRef} className={css.board}>
+        {board.map((cell) => {
+          return (
+            <Cell key={cell.id} {...cell} />
+          );
+        })}
+      </div>
 
-          <Player name={PLAYER_1_NAME} />
-        </>
-      )}
+      <Player name={PLAYER_1_NAME} />
     </div>
   );
 };
