@@ -1,23 +1,27 @@
-import React, {FC, useEffect} from "react";
+import React, { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectActivityList } from "@selectors/activity-selectors";
-import { addActivity } from "@slices/activity-slice";
+import {addActivity, clearActivityList} from "@slices/activity-slice";
 import { DEFAULT_ACTIVITY_TEXT_PLAYER_1 } from "@constants";
 import { resetBoard, resetTurn } from "@slices/board-slice";
 import { Header } from "@shared/Header/Header";
 import css from './Activities.css';
 
 export const Activities: FC = () => {
+  // Hooks
   const dispatch = useDispatch();
   const activityList = useSelector(selectActivityList);
 
   useEffect(() => {
-    dispatch(addActivity(DEFAULT_ACTIVITY_TEXT_PLAYER_1));
-  }, []);
+    if (activityList.length === 0) {
+      dispatch(addActivity(DEFAULT_ACTIVITY_TEXT_PLAYER_1));
+    }
+  }, [activityList.length]);
 
   const handleNewGame = () => {
     dispatch(resetBoard());
     dispatch(resetTurn());
+    dispatch(clearActivityList());
   };
 
   return (

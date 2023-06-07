@@ -3,16 +3,14 @@ import { store } from "../store";
 import {getCellById, getNeighboursIdList, getPossibleCaptureIdList, getPossibleGoIdList} from "@utils/board-util";
 import {TCell} from "@slices/board-slice";
 
+// Primitive Selectors
 export const selectBoard = () => store.getState().board.boardState;
-
 export const selectTurnCounter = () => store.getState().board.turnCounter;
-
 export const selectStopDnDId = () => store.getState().board.stopDnDId;
-
 export const selectIsGameOver = () => store.getState().board.isGameOver;
-
 export const selectMoveExtender = () => store.getState().board.moveExtender;
 
+// Selectors
 export const selectIsWhiteTurn = createSelector(
   [selectTurnCounter],
   (turnCounter) => !Boolean(turnCounter % 2)
@@ -45,7 +43,7 @@ export const selectCellById = (id: string) => createSelector(
   }
 );
 
-export const selectPossibleGoCellIdListById = (id: string) => createSelector(
+export const selectPossibleGoIdListForId = (id: string) => createSelector(
   [selectCellById(id)],
   (currentCell) => getPossibleGoIdList(id, currentCell.isCheckerBlack)
 );
@@ -57,7 +55,7 @@ export const selectCellListByIdList = (idList: string[]) => createSelector(
 );
 
 export const selectIsCheckerMovable = (id: string, captureList: TCell[]) => createSelector(
-  [selectPlayingCellList, selectPossibleGoCellIdListById(id)],
+  [selectPlayingCellList, selectPossibleGoIdListForId(id)],
   (cellList, possibleGoCellIdList) =>
     captureList.length === 0
       ? cellList

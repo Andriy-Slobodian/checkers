@@ -1,6 +1,6 @@
 import { changeTurn, gameOver, moveChecker } from "@slices/board-slice";
 import { useDispatch, useSelector } from "react-redux";
-import { checkCapturing, getMoveList } from "@utils/board-util";
+import { getCapturing, getMoveList } from "@utils/board-util";
 import {
   selectBlackAmount,
   selectBoard,
@@ -20,7 +20,7 @@ export const useMove = () => {
   const whiteCheckersAmount = useSelector(selectWhiteAmount);
 
   // Variables
-  const captureList = checkCapturing(board, isWhiteTurn);
+  const captureList = getCapturing(board, isWhiteTurn);
   const isCapturing = captureList.length > 0;
   const moveList = getMoveList(playingCellList);
   const isMove = moveList.length > 0;

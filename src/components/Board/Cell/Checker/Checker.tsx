@@ -7,9 +7,10 @@ import {
   selectIsCheckerMovable,
   selectIsQueen,
   selectIsWhiteTurn,
-  selectPossibleGoCellIdListById
+  selectPossibleGoIdListForId
 } from "@selectors/board-selectors";
 import {
+  resetPossibleGoList,
   TCoordinates,
   updateCheckerShadow,
   updatePossibleGoList
@@ -27,7 +28,7 @@ export const Checker: FC<Props> = ({
   // Hooks
   const dispatch = useDispatch();
   const currentCell = useSelector(selectCellById(id));
-  const possibleGoCellIdList = useSelector(selectPossibleGoCellIdListById(id));
+  const possibleGoCellIdList = useSelector(selectPossibleGoIdListForId(id));
   const possibleGoCellList = useSelector(selectCellListByIdList(possibleGoCellIdList));
   const isWhiteTurn = useSelector(selectIsWhiteTurn);
   const isCheckerQueen = useSelector(selectIsQueen(id));
