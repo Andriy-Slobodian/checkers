@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,7 +10,6 @@ import {
   selectPossibleGoIdListForId
 } from "@selectors/board-selectors";
 import {
-  resetPossibleGoList,
   TCoordinates,
   updateCheckerShadow,
   updatePossibleGoList
@@ -22,7 +21,7 @@ import css from "./Checker.css";
 interface Props {
   id: string;
 }
-export const Checker: FC<Props> = ({
+export const Checker: FC<Props> = memo(({
   id
 }) => {
   // Hooks
@@ -91,4 +90,4 @@ export const Checker: FC<Props> = ({
       )}
     </>
   );
-};
+});

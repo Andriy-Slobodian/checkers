@@ -1,13 +1,13 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectActivityList } from "@selectors/activity-selectors";
-import {addActivity, clearActivityList} from "@slices/activity-slice";
+import { addActivity, clearActivityList } from "@slices/activity-slice";
 import { DEFAULT_ACTIVITY_TEXT_PLAYER_1 } from "@constants";
 import { resetBoard, resetTurn } from "@slices/board-slice";
 import { Header } from "@shared/Header/Header";
 import css from './Activities.css';
 
-export const Activities: FC = () => {
+export const Activities: FC = memo(() => {
   // Hooks
   const dispatch = useDispatch();
   const activityList = useSelector(selectActivityList);
@@ -38,4 +38,4 @@ export const Activities: FC = () => {
       <button className={css.newGameBtn} onClick={handleNewGame}>New Game</button>
     </div>
   );
-};
+});

@@ -1,4 +1,4 @@
-import {FC} from "react";
+import { FC, memo } from "react";
 import css from './Header.css';
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
   text: string;
   type?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 }
-export const Header: FC<Props> = ({
+export const Header: FC<Props> = memo(({
   text,
   type = 'h1',
   align = 'center'
@@ -22,4 +22,4 @@ export const Header: FC<Props> = ({
   return (
     <HeadingTag className={cssClasses}>{text}</HeadingTag>
   );
-};
+});

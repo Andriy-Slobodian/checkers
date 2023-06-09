@@ -92,7 +92,7 @@ export const getPossibleCaptureIdList = (id: string) => {
 };
 
 export const getCellById = (id: string, list: TCell[]) =>
-    list.filter(item => item.id === id)[0];
+    list.find(item => item.id === id);
 
 export const isOverlapping = (pointerCoordinates, cellCoordinates) => {
   if (!pointerCoordinates || !cellCoordinates) {
@@ -209,9 +209,4 @@ export const getCapturedId = (oldPositionID: string, newPositionId: string) => {
   const middleColumn = oldColumn > newColumn ? oldColumn - 1 : oldColumn + 1;
 
   return `${middleRow}${middleColumn}`;
-};
-
-export const isGameOver = () => {
-
-  return false;
 };

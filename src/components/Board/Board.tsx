@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, memo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useMove } from "@hooks/useMove";
 import {
@@ -23,7 +23,7 @@ import { Cell } from "./Cell/Cell";
 import { Player } from "@components/Board/Player/Player";
 import css from "./Board.css";
 
-export const Board: FC = () => {
+export const Board: FC = memo(() => {
   // Hooks
   const dispatch = useDispatch();
   const board = useSelector(selectBoard);
@@ -107,9 +107,6 @@ export const Board: FC = () => {
     }
   }, [stopDnDId, isCapturing]);
 
-  // console.log(board);
-  // console.log(captureList.map(cell => cell.id));
-
   return (
     <div className={css.container}>
       <Player name={PLAYER_2_NAME} isAutoPlayer={true} />
@@ -125,5 +122,5 @@ export const Board: FC = () => {
       <Player name={PLAYER_1_NAME} />
     </div>
   );
-};
+});
 

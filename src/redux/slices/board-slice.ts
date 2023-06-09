@@ -25,14 +25,21 @@ export type TCell = {
   isHighlightedForCapturing: boolean;
 }
 
-const initialState = {
+type TInitialState = {
+  boardState: TCell[],
+  turnCounter: number,
+  stopDnDId: string | null,
+  moveExtender: number,
+  isGameOver: boolean
+}
+
+const initialState: TInitialState = {
   boardState: [],
   turnCounter: 0,
   stopDnDId: null,
   moveExtender: 0,
   isGameOver: false
 }
-
 export const boardSlice = createSlice({
   name: 'board',
   initialState,

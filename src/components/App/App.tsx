@@ -1,4 +1,4 @@
-import React, { FC, SyntheticEvent } from "react";
+import React, { FC, memo, SyntheticEvent } from "react";
 import { resetCheckerShadow, resetPossibleGoList } from "@slices/board-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectIsGameOver } from "@selectors/board-selectors";
@@ -8,7 +8,7 @@ import { EndGame } from "@components/EndGame/EndGame";
 import { Header } from "@shared/Header/Header";
 import css from "./App.css";
 
-export const App: FC = () => {
+export const App: FC = memo(() => {
   // Hooks
   const dispatch = useDispatch();
   const isGameOver = useSelector(selectIsGameOver);
@@ -30,4 +30,4 @@ export const App: FC = () => {
       {isGameOver && <EndGame />}
     </div>
   );
-};
+});

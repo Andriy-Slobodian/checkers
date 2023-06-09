@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import { TurnIndicator } from "@components/Board/Player/TurnIndicator/TurnIndicator";
 import css from "./Player.css";
 
@@ -6,7 +6,7 @@ interface Props {
   name: string;
   isAutoPlayer?: boolean;
 }
-export const Player: FC<Props> = ({
+export const Player: FC<Props> = memo(({
   name,
   isAutoPlayer = false
 }) => {
@@ -16,4 +16,4 @@ export const Player: FC<Props> = ({
       <TurnIndicator isActive={isAutoPlayer} />
     </div>
   );
-};
+});

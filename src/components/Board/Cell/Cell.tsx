@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import { Checker } from "./Checker/Checker";
 import css from "./Cell.css";
 
@@ -9,7 +9,7 @@ interface Props {
   isPossibleGoCell: boolean;
   isHighlightedForCapturing: boolean;
 }
-export const Cell: FC<Props> = ({
+export const Cell: FC<Props> = memo(({
   id,
   isPlayingCell,
   hasCellChecker,
@@ -34,4 +34,4 @@ export const Cell: FC<Props> = ({
       )}
     </div>
   );
-};
+});

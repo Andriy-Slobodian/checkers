@@ -1,7 +1,9 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
-const initialState = {
+type TInitialState = {
+  activityList: string[]
+}
+const initialState: TInitialState = {
   activityList: []
 }
 export const activitySlice = createSlice({
